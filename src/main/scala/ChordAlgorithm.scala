@@ -12,14 +12,14 @@ case object FindNodeSuccessor
 
 case object StabilizeRing
 
-case class JoinNode(nodeArrayActors:Array[Int],nodeIndex:Int)
+case class JoinNode(nodeArrayActors:Array[String],nodeIndex:Int)
 
 
 class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
                      SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
 
   var activenodes: Int = 0
-  var NodeArrayActors: Array[Int] = Array()
+  var NodeArrayActors: Array[String] = Array()
   var m:Int = 0
 
   def receive = {
@@ -33,7 +33,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       activenodes = ((Math.log10(TotalNodes.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
       m = activenodes
 
-      NodeArrayActors = new Array[Int](activenodes)
+      NodeArrayActors = new Array[String](TotalNodes)
 
       println("Node of array actors length: maintaining the hashes for each computer/actor length:" + NodeArrayActors.length)
       println("Total number of active nodes in the cloud: " + activenodes)
@@ -41,7 +41,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       /* on the basis of the total nodes - each node must be created - that is intiated as an actor*/
 
       for (i <- 0 to TotalNodes - 1) {
-        println("Inside for loop")
+        println("Inside for loop - instantiating actors for each computer in cloud")
         val workerNodes = ChordActorSys.actorOf(Props(new CloudNodeActor(TotalNodes, activenodes, MinMsgs, MaxMsgs, listFileItems, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
         workerNodes ! "intiateEachNode"
       }
@@ -53,12 +53,9 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       println("Activate the the node in ring with index: "+nodeIndex)
       println("Node at index: "+nodeIndex+" hashed value: "+NodeArrayActors(nodeIndex))
 
-      var actNodeHashedId=NodeArrayActors(nodeIndex)
-
       /* use the akka actor selection to call each actor as intiated for totoal nodes */
       val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
       eachnodeactor ! JoinNode(NodeArrayActors,nodeIndex)
-
     }
   }
 
@@ -73,7 +70,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
     var hashValues:String =""
 
     /* udpate the array to store the hashed value for a random generated string for only the active nodes */
-    for (count <- 0 to activenodes - 1) {
+    for (count <- 0 to TotalNodes - 1) {
       randomStr = Random.alphanumeric.take(40).mkString
       println("Random String: "+randomStr)
       hashValues = md5(randomStr)
@@ -84,13 +81,14 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
 
       println("hashvalue after substring : "+hashValues)
 
-      var newNumericHash = (hashValues.replaceAll("[^0-9]","")).toInt
+      /**  hashed value for each active node : **/
+      NodeArrayActors(count) = hashValues
 
-      println("Numeric hash :"+newNumericHash+" for hash value: "+hashValues)
-
-      /**  newNumericHash : this will be used as the NodeId for maintaining the nodes id**/
-      NodeArrayActors(count) = newNumericHash
-
+    }
+    scala.util.Sorting.quickSort(NodeArrayActors)
+    /* Print Sort the calculated hashes */
+    for (count <- 0 to TotalNodes - 1) {
+      println("Sorted Hashed Node at Index: "+count+" key: "+NodeArrayActors(count))
     }
     /* activate the first node in the ring */
     self ! ActivateNodeInRing(0)
@@ -103,7 +101,7 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
                      SimluationMark : Int,Index: Int,ChordActorSys:ActorRef) extends Actor {
 
   //val ringArray = Array.ofDim[Int](ActiveNodes,MinMsgs,MaxMsgs,SimluationMark,SimulationDuration,3)
-  val fingerTable = Array.ofDim[Int](ActiveNodes,3)
+  val fingerTable = Array.ofDim[Int](ActiveNodes,2)
   var nodeHopsCounter:Int=0
   val m: Int = ActiveNodes
 
@@ -112,11 +110,12 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
       println("Initiate Node")
     }
 
-    case JoinNode(nodeArrayActors:Array[Int], nodeIndex:Int) => {
+    case JoinNode(nodeArrayActors:Array[String], nodeIndex:Int) => {
       println("In Join node for each actor reperesenting the active node in ring - now joining ring")
       for(i<-0 to m-1)
       {
         println("Value inserted at index: "+i+" is: "+((Index+math.pow(2,i).toInt)%TotalNodes))
+        /* calculate the node that the current node actor*/
         fingerTable(i)(0) = (Index+math.pow(2,i).toInt)%TotalNodes
         /*if(i!=m-1)
         {
@@ -128,8 +127,8 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
       //notify(actNodeArray,index)
       //Checks if all the active nodes are added to the network. If not adds the remaining nodes,
       // else if all the active nodes are added then starts the process for message passing.
-      if(nodeIndex < nodeArrayActors.length-1) {
-        println("When all active nodes are not yet a part of rind,call the master node again to add the active node to the ring")
+      if(nodeIndex < ActiveNodes-1) {
+        println("When all active nodes are not yet a part of ring,call the master node again to add the active node to the ring")
         sender ! ActivateNodeInRing(nodeIndex + 1)
       }
       else{
@@ -179,7 +178,7 @@ object chordMainMethod {
       var readRequest = 2
       var writeRequest = 1
 
-      var system = ActorSystem("ChordProtocolHW4")
+      val system = ActorSystem("ChordProtocolHW4")
 
       /*for(countUser <-0 to noOfUsers-1){
 
