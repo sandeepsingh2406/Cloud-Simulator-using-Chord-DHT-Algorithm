@@ -1,0 +1,2 @@
+Stabilization after addition, deletion
+snapshot after certain time
