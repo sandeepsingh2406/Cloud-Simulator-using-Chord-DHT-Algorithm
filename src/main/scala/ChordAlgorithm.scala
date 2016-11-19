@@ -19,7 +19,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
                      SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
 
   var activenodes: Int = 0
-  var NodeArrayActors: Array[String] = Array()
+  var NodeArrayActors  = Array.ofDim[String](TotalNodes,2)
   var m:Int = 0
 
   def receive = {
@@ -33,7 +33,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       activenodes = ((Math.log10(TotalNodes.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
       m = activenodes
 
-      NodeArrayActors = new Array[String](TotalNodes)
+      //NodeArrayActors = Array.ofDim[String](TotalNodes,2)
 
       println("Node of array actors length: maintaining the hashes for each computer/actor length:" + NodeArrayActors.length)
       println("Total number of active nodes in the cloud: " + activenodes)
@@ -55,7 +55,8 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
 
       /* use the akka actor selection to call each actor as intiated for totoal nodes */
       val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
-      eachnodeactor ! JoinNode(NodeArrayActors,nodeIndex)
+      NodeArrayActors(nodeIndex)(1) = "1" //assuming this node is joined - making this active
+      eachnodeactor ! JoinNode(NodeArrayActors(nodeIndex),nodeIndex)
     }
   }
 
@@ -82,14 +83,15 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       println("hashvalue after substring : "+hashValues)
 
       /**  hashed value for each active node : **/
-      NodeArrayActors(count) = hashValues
+      NodeArrayActors(count)(0) = hashValues
+      NodeArrayActors(count)(1) = "0"
 
     }
-    scala.util.Sorting.quickSort(NodeArrayActors)
+    /*scala.util.Sorting.quickSort(NodeArrayActors)
     /* Print Sort the calculated hashes */
     for (count <- 0 to TotalNodes - 1) {
-      println("Sorted Hashed Node at Index: "+count+" key: "+NodeArrayActors(count))
-    }
+      println("Sorted Hashed Node at Index: "+count+" key: "+NodeArrayActors(count)(0))
+    }*/
     /* activate the first node in the ring */
     self ! ActivateNodeInRing(0)
 
@@ -100,10 +102,9 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
 class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
                      SimluationMark : Int,Index: Int,ChordActorSys:ActorRef) extends Actor {
 
-  //val ringArray = Array.ofDim[Int](ActiveNodes,MinMsgs,MaxMsgs,SimluationMark,SimulationDuration,3)
-  val fingerTable = Array.ofDim[Int](ActiveNodes,2)
   var nodeHopsCounter:Int=0
-  val m: Int = ActiveNodes
+  val m: Int = ((Math.log10(TotalNodes.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
+  val fingerTable = Array.ofDim[Int](m,3)
 
   def receive = {
     case "intiateEachNode" => {
@@ -123,6 +124,7 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
         }*/
 
       }
+
       //getSucc(actNodeArray,index)
       //notify(actNodeArray,index)
       //Checks if all the active nodes are added to the network. If not adds the remaining nodes,
@@ -133,6 +135,7 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
       }
       else{
         println("Finger table updated for all active nodes as:")
+
         for(i<-0 to fingerTable.length-1){
           println("Value at index: "+i+" is: "+fingerTable(i)(0))
         }
@@ -140,11 +143,29 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
         val inst: Service = new Service()
         inst.method(new Array[String](5))
 
+
+        self ! "fetchFingerTable"
       }
       /*else
       {
         Master ! "startScheduling"
       }*/
+    }
+
+    case "PrintFingerTable" => {
+      for(i<-0 to fingerTable.length-1){
+        println("Value at index: "+i+" is: "+fingerTable(i)(0))
+      }
+    }
+
+    case "fetchFingerTable" => {
+      for(i <- 0 to ActiveNodes-1){
+        val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+i.toString)
+        println("Finger table call for node: "+i)
+        eachnodeactor ! "PrintFingerTable"
+      }
+
+
     }
   }
 }
