@@ -136,6 +136,10 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
         for(i<-0 to fingerTable.length-1){
           println("Value at index: "+i+" is: "+fingerTable(i)(0))
         }
+        println("Now starting web service which helps to interact with cloud system")
+        val inst: Service = new Service()
+        inst.method(new Array[String](5))
+
       }
       /*else
       {
