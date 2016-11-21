@@ -3,3 +3,6 @@
 
 Important:
 https://raw.githubusercontent.com/takirala/ChordDHT/master/src/main/scala/Project3.scala
+
+Very simple, manual everything
+https://github.com/mayank3d/Chord_Protocol_DHT
