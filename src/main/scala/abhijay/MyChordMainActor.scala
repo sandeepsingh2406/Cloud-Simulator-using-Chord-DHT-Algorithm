@@ -10,8 +10,8 @@ import scala.util.Random
   * Created by avp on 11/20/2016.
   */
 
-class MyChordMainActor(TotalNodes: Int, MinMsgs: Int, MaxMsgs: Int, listFileItems : String, SimulationDuration: Int,
-                       SimluationMark : Int, ChordActorSys: ActorSystem) extends Actor {
+class MyChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
+                     SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
 
   var activenodes: Int = 0
   var NodeArrayActors  = Array.ofDim[String](TotalNodes,2)
@@ -20,6 +20,7 @@ class MyChordMainActor(TotalNodes: Int, MinMsgs: Int, MaxMsgs: Int, listFileItem
   def receive = {
 
     case "startProcess" => {
+      println("In Start Process")
       println("Master Node has been Initiated")
       println("Total nodes in the cloud: " + TotalNodes)
 
@@ -37,9 +38,9 @@ class MyChordMainActor(TotalNodes: Int, MinMsgs: Int, MaxMsgs: Int, listFileItem
       InitializeNodeHashTable
 
       for (i <- 0 to TotalNodes - 1) {
-        println("Inside for loop - instantiating actors for each computer in cloud with node: "+i)
+        //println("Inside for loop - instantiating actors for each computer in cloud with node: "+i)
         val workerNodes = ChordActorSys.actorOf(Props(new MyCloudNodeActor(TotalNodes, activenodes, MinMsgs, MaxMsgs, listFileItems, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
-        workerNodes ! "intiateEachNode"
+        workerNodes ! "initiateEachNode"
       }
       self ! ActivateNodeInRing(0)
 
@@ -50,9 +51,9 @@ class MyChordMainActor(TotalNodes: Int, MinMsgs: Int, MaxMsgs: Int, listFileItem
       println("Activate the the node in ring with index: "+nodeIndex)
       println("Node at index: "+nodeIndex+" hashed value: "+NodeArrayActors(nodeIndex)(0).toString)
 
-      /* use the akka actor selection to call each actor as intiated for totoal nodes */
+      /* use the akka actor selection to call each actor as initiated for total nodes */
       val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
-      NodeArrayActors(nodeIndex)(1) = "1" //assuming this node is joined - making this active
+      NodeArrayActors(nodeIndex)(1) = "1" //assuming this node will be successfully joined - making this active
       eachnodeactor ! JoinNode(NodeArrayActors(nodeIndex),nodeIndex)
     }
 
@@ -74,28 +75,35 @@ class MyChordMainActor(TotalNodes: Int, MinMsgs: Int, MaxMsgs: Int, listFileItem
     var count:Int = 0
     var randomStr:String = ""
     var hashValues:String =""
+    var tempHashValues = new Array[String](TotalNodes);
 
     /* udpate the array to store the hashed value for a random generated string for only the active nodes */
     for (count <- 0 to TotalNodes - 1) {
       randomStr = Random.alphanumeric.take(40).mkString
-      println("Random String: "+randomStr)
+      //println("Random String: "+randomStr)
       hashValues = md5(randomStr)
-      println("Hash value from MD5 digest: "+hashValues)
+      //println("Hash value from MD5 digest: "+hashValues)
       val forHash = Math.pow(2.toDouble,m.toDouble-1).toInt
 
       hashValues = hashValues.substring(0,forHash)
 
-      println("hashvalue after substring : "+hashValues)
+//      println("hashvalue after substring : "+hashValues)
 
       /**  hashed value for each active node : **/
+/*
       NodeArrayActors(count)(0) = hashValues
       NodeArrayActors(count)(1) = "0"
+*/
+      tempHashValues(count) = hashValues;
 
     }
     /*scala.util.Sorting.quickSort(NodeArrayActors)*/
+    scala.util.Sorting.quickSort(tempHashValues)
     /* Print Sort the calculated hashes */
     for (count <- 0 to TotalNodes - 1) {
-      println("Sorted Hashed Node at Index: "+count+" key: "+NodeArrayActors(count)(0))
+      NodeArrayActors(count)(0) = tempHashValues(count)
+      NodeArrayActors(count)(1) = "0"
+//      println("Sorted Hashed Node at Index: "+count+" key: "+NodeArrayActors(count)(0))
     }
     /* activate the first node in the ring */
 
@@ -115,3 +123,4 @@ class MyChordMainActor(TotalNodes: Int, MinMsgs: Int, MaxMsgs: Int, listFileItem
     activeNodeHashes
   }
 }
+
