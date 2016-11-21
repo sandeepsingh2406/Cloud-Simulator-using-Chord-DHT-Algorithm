@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Created by singsand on 11/20/2016.
  */
 public class chordImplemen {
-    List<node_details> list_nodes=new ArrayList<node_details>();
+    static List<node_details> list_nodes=new ArrayList<node_details>();
 
     public static void main(String arg[])
 
@@ -51,14 +51,22 @@ public class chordImplemen {
             int num = in.nextInt();
             node_details obj=new node_details();
             obj=obj.join_ring(num,existing_node_j);
-
-            obj.stabilize();
-            node_details successor_obj=new node_details();
-            successor_obj=get_node(obj.successor);
-            successor_obj.notify(obj);
-            list_nodes.get(0).stabilize();
-            obj.fix_fingers();
             list_nodes.add(obj);
+            int j=0;
+            while(j<3) {
+                for (int i = 0; i < list_nodes.size(); i++) {
+                    obj.stabilize();
+                    list_nodes.get(i).stabilize();
+                    obj.fix_fingers();
+                    list_nodes.get(i).fix_fingers();
+
+                }
+                j++;
+            }
+
+
+
+
 
 
 //            stabilize_fixfingers_checkpredecessor();
@@ -77,6 +85,9 @@ public class chordImplemen {
         {
 
                 System.out.println("Displaying finger table for Node "+list_nodes.get(i).id);
+            System.out.println("predecessor"+list_nodes.get(i).predecessor);
+            System.out.println("successor"+list_nodes.get(i).successor);
+
             System.out.println(            list_nodes.get(i).finger_table[0][0]+":"+list_nodes.get(i).finger_table[0][1]);
             System.out.println(            list_nodes.get(i).finger_table[1][0]+":"+list_nodes.get(i).finger_table[1][1]);
             System.out.println(            list_nodes.get(i).finger_table[2][0]+":"+list_nodes.get(i).finger_table[2][1]);
@@ -132,54 +143,79 @@ class node_details {
         return obj_i;
     }
 
-    int Locate_Successor(int key) {
-        int i = this.id;
-        int successor = this.successor;
-        node_details j = new node_details();
-        System.out.println("i:"+i);
-        System.out.println("successor:"+successor);
-        System.out.println("key.id:"+key);
+    node_details find_predecessor(int id){
+        node_details n_dash = new node_details();
+        n_dash=this;
 
-        if ((key > i && key <= successor) || (!(key <= i && key > successor)) || (key == successor && key != i))
-            return successor;
-
-        else
-
-            j = closest_preceding_node(key);
-
-        return (j.Locate_Successor(key));
+        while(((n_dash.id > n_dash.successor && (id <= n_dash.id && id > n_dash.successor)) ||
+                (n_dash.id < n_dash.successor && (id <= n_dash.id || id > n_dash.successor)))
+                &&  (n_dash.id!=n_dash.successor ))
+        {
+            n_dash = n_dash.closest_preceding_finger(id);
+        }
+        return n_dash;
 
     }
 
-    node_details closest_preceding_node(int key) {
+    int Locate_Successor(int id) {
+//        int i = this.id;
+//        int successor = this.successor;
+
+        node_details n_dash = new node_details();
+        n_dash=this.find_predecessor(id);
+        return n_dash.successor;
+//        System.out.println("i:"+i);
+//        System.out.println("successor:"+successor);
+//        System.out.println("key.id:"+key);
+//
+//        if ((this.id>this.successor && (key > this.id || key <= this.successor)) ||
+//                (this.id<this.successor && key > this.id && key <= this.successor)
+//                || this.id == this.successor  )
+//            return successor;
+//
+//        else
+//
+//            j = closest_preceding_node(key);
+//
+//        return (j.Locate_Successor(key));
+
+    }
+
+    node_details closest_preceding_finger(int id) {
         int count = 0;
         for (count = 3; count > 0; count--) {
-            if ((this.finger_table[count][1] > this.id && this.finger_table[count][1] <= key)
-                    || (!(this.finger_table[count][1] <= this.id && this.finger_table[count][1] > key))
-                    || (this.id == key && this.finger_table[count][1] != this.id))
-                break;
+            if  ((this.id>id && (this.finger_table[count-1][1] > this.id || this.finger_table[count-1][1] < id))
+                        || (this.id<id && this.finger_table[count-1][1] > this.id && this.finger_table[count-1][1] < id)
+                        || (this.id==id && this.id!=this.finger_table[count-1][1])  )
+
+                return (new chordImplemen().get_node((this.finger_table[count-1][1])));
         }
-        return (new chordImplemen().get_node((this.finger_table[count][1])));
-
-
+        return (this);
+//
+//
     }
     void stabilize(){
 
-        int successor=this.successor;
-        node_details successor_obj=new chordImplemen().get_node(successor);
+        node_details successor_obj=new chordImplemen().get_node(this.successor);
         int x=successor_obj.predecessor;
-        if((x > this.id && x < successor) || (!(x <= this.id && x >= successor)) || (x == successor && x != this.id)) {
-            successor = x;
+        if(     x > -1 &&
+                ((this.id>this.successor && (x > this.id || x < this.successor)) || (this.id<this.successor && x > this.id && x < this.successor)
+                || this.id == this.successor && x != this.id ))
+         {
+            this.successor = x;
         }
-        successor_obj=new chordImplemen().get_node(successor);
+        successor_obj=new chordImplemen().get_node(this.successor);
         successor_obj.notify(this);
 
     }
     void notify(node_details node_j)
     {
         if(this.predecessor==-1 ||
-                ((node_j.id > this.predecessor && node_j.id < this.id) || (!(node_j.id <= this.predecessor && node_j.id >= this.id))
-                        || (this.predecessor == this.id && node_j.id != this.predecessor)))
+
+                ((this.predecessor>this.id && (node_j.id > this.predecessor || node_j.id < this.id)) ||
+                        (this.predecessor>this.id && node_j.id > this.predecessor && node_j.id < this.id)
+                        || this.predecessor == this.id && node_j.id != this.predecessor ))
+
         {
             //transfer keys
             this.predecessor=node_j.id;
@@ -191,15 +227,16 @@ class node_details {
     void fix_fingers() {
         System.out.println("this.next_finger " + this.next_finger);
         while (true) {
-            this.next_finger++;
+
             if (this.next_finger > 3) {
                 this.next_finger = 1;
             }
             this.finger_table[this.next_finger - 1][0] = this.id + (int) Math.pow(2, this.next_finger - 1);
-            this.finger_table[this.next_finger - 1][1] = this.Locate_Successor( (int) (Math.pow(2, this.next_finger - 1)));
+            this.finger_table[this.next_finger - 1][1] = this.Locate_Successor(this.id+ (int) (Math.pow(2, this.next_finger - 1)));
 
+            this.next_finger++;
 
-            if (this.next_finger == 1)
+            if (this.next_finger > 3)
                 break;
 
         }
