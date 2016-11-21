@@ -231,8 +231,11 @@ class node_details {
             if (this.next_finger > 3) {
                 this.next_finger = 1;
             }
-            this.finger_table[this.next_finger - 1][0] = this.id + (int) Math.pow(2, this.next_finger - 1);
-            this.finger_table[this.next_finger - 1][1] = this.Locate_Successor(this.id+ (int) (Math.pow(2, this.next_finger - 1)));
+
+            int id =(this.id + (int) Math.pow(2, this.next_finger - 1))%(int)Math.pow(2, 3);
+
+            this.finger_table[this.next_finger - 1][0] = id;
+            this.finger_table[this.next_finger - 1][1] = this.Locate_Successor(id);
 
             this.next_finger++;
 
