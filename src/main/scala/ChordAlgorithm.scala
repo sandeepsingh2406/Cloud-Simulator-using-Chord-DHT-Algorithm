@@ -7,22 +7,26 @@ import akka.actor._
 import akka.pattern.ask
 import akka.util.Timeout
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
+case class FindSuccessor(fingerNodeValue : Int ,currActorNodeIndex: Int)
 
-case class JoinNode(prevNode: Int, newNode: Int)
+case class LocateSuccessor(nodeIndex : Int)
+
+case class JoinNode(newNode: Int, existingNode: Int)
 
 case class ActivateNodeInRing(nodeIndex:Int)
 
-case class ActivateOtherNode(prevIndex : Int,nodeIndex : Int)
+case class ActivateOtherNode(newNode : Int, existingNode : Int)
 
 case object NodeLeave
 
 case object FindNodeSuccessor
 
-case object StabilizeRing
+case class StabilizeRing(nodeIndex : Int)
 
 case class CreateRing(nodeArrayActors:Array[String],nodeIndex:Int)
 
@@ -45,6 +49,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
   var activenodes: Int = 0
   var NodeArrayActors  = Array.ofDim[String](TotalNodes)
   var m:Int = 0
+  implicit val timeout = Timeout(20 seconds)
 
   def receive = {
 
@@ -77,6 +82,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
     case ActivateNodeInRing(nodeIndex : Int)=> {
       println("Activate the the node in ring with index: "+nodeIndex)
       println("Node at index: "+nodeIndex+" hashed value: "+NodeArrayActors(nodeIndex).toString)
+      chordMainMethod.ActorJoined+=nodeIndex
 
       /* use the akka actor selection to call each actor as intiated for totoal nodes */
       val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
@@ -84,13 +90,60 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       eachnodeactor ! CreateRing(NodeArrayActors,nodeIndex)
     }
 
-    case ActivateOtherNode(prevIndex : Int, nodeIndex : Int) => {
+    case ActivateOtherNode(newNode : Int, existingNode : Int) => {
 
-      val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
+      println("After 0 is added ")
+      FetchFingerTable
 
-      eachnodeactor ! JoinNode(prevIndex,nodeIndex)
+      var eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+newNode.toString)
+
+      var futureNode = eachnodeactor ? JoinNode(newNode,existingNode)
+
+      val result = Await.result(futureNode, timeout.duration).asInstanceOf[String]
+
+      println("Returned: "+result)
+      chordMainMethod.ActorJoined+=newNode
+
+      println("Existing nodes: "+chordMainMethod.ActorJoined)
+
+
+      for(counter <- 0 until 3){
+
+        for(insidecounter <- 0 until chordMainMethod.ActorJoined.length)
+        {
+          var futureStabilize = eachnodeactor ? StabilizeRing(newNode)
+          println(Await.result(futureStabilize, timeout.duration).asInstanceOf[String])
+
+          var neweachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+chordMainMethod.ActorJoined(insidecounter).toString)
+
+          futureNode = neweachnodeactor ? StabilizeRing(chordMainMethod.ActorJoined(insidecounter))
+
+          println(Await.result(futureNode, timeout.duration).asInstanceOf[String])
+
+
+          futureStabilize = eachnodeactor ? LocateSuccessor(newNode)
+          println(Await.result(futureStabilize, timeout.duration).asInstanceOf[String])
+
+          futureNode = neweachnodeactor ? LocateSuccessor(chordMainMethod.ActorJoined(insidecounter))
+
+          println(Await.result(futureNode, timeout.duration).asInstanceOf[String])
+
+        }
+
+      }
+
+      println("After 1 & 0 is added ")
+      FetchFingerTable
     }
 
+  }
+
+  def FetchFingerTable: Unit = {
+    for(i <- 0 until chordMainMethod.ActorJoined.length){
+      val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+chordMainMethod.ActorJoined(i).toString)
+      var future = eachnodeactor ? PrintFingerTable(i)
+      println(Await.result(future, timeout.duration).asInstanceOf[String])
+    }
   }
 
   def md5(s: String) = { MessageDigest.getInstance("MD5").digest(s.getBytes).toString }
@@ -152,8 +205,17 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
       println("Initiate Node")
     }
 
-    case JoinNode(prevNode: Int, newNode: Int) => {
-      println("In JoinNode for node: "+newNode+" with previous node: "+prevNode)
+    case JoinNode(newNode:  Int,existingNode : Int) => {
+      isActiveNode = 1
+
+      println("In JoinNode for node: "+newNode+" with previous node: "+existingNode)
+      val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+existingNode.toString)
+      val futureNodeSucc = tempActor ? FindSuccessor(newNode,existingNode)
+
+      this.successor = Await.result(futureNodeSucc, timeout.duration).asInstanceOf[Int]
+
+      println("After FindSuccessor case: new successor for new node: "+newNode+" value is: "+this.successor)
+      sender() ! "JoinNode Done"
     }
 
     case CreateRing(nodeArrayActors:Array[String], nodeIndex:Int) => {
@@ -179,7 +241,8 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
       // else if all the active nodes are added then starts the process for message passing.
       if(nodeIndex <= (ActiveNodes-1)) {
         println("When all active nodes are not yet a part of ring,call the master node again to add the active node to the ring")
-        sender ! ActivateOtherNode(nodeIndex,nodeIndex + 1)
+
+        sender ! ActivateOtherNode(nodeIndex+1, nodeIndex)
       }
       else{
         /*println("Now starting web service which helps to interact with cloud system")
@@ -197,13 +260,13 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
       for(i<-0 to (fingerTable.length-1)){
         println("Node: "+nodeIndex+" Finger table values at index: "+i+" is: "+fingerTable(i)(0)+" successor: "+fingerTable(i)(1))
       }
-      sender ! "done"
+      sender ! "done for: "+nodeIndex
     }
 
     case "fetchFingerTable" => {
 
-      for(i <- 0 to 1){
-        val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+i.toString)
+      for(i <- 0 until chordMainMethod.ActorJoined.length){
+        val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+chordMainMethod.ActorJoined(i).toString)
         eachnodeactor ! PrintFingerTable(i)
       }
 
@@ -214,6 +277,11 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
     case GetPredecessor(tempSucc:Int) =>{
       println("Get Predecessor for node: "+tempSucc+" value: "+this.predecessor)
       sender ! this.predecessor
+    }
+
+    case StabilizeRing(nodeIndex : Int) => {
+      Stabilize(nodeIndex)
+      sender ! "Stabilize Done for "+nodeIndex
     }
 
     case GetSuccessor(tempNode: Int) =>{
@@ -246,6 +314,16 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
 
       val tempNode = closest_preceding_finger(fingerNodeValue,tempCurrNode)
       sender ! tempNode
+    }
+
+    case FindSuccessor(fingerNodeValue : Int ,currActorNodeIndex: Int) =>{
+      val tempSuccVal = find_successor(fingerNodeValue,currActorNodeIndex)
+      sender ! tempSuccVal
+    }
+
+    case LocateSuccessor(nodeIndex : Int) => {
+      val tempSuccVal = locate_successor(nodeIndex)
+      sender ! "Fixed Finger for " +nodeIndex
     }
 
   }
@@ -402,6 +480,7 @@ class CloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: In
 object chordMainMethod {
 
 
+  var ActorJoined : ListBuffer[Int] = new ListBuffer[Int]()
   def main(args: Array[String]) {
     /* The inputs : the number of users, the */
     /* if (args.length != 2)
@@ -432,6 +511,8 @@ object chordMainMethod {
     var readRequest = 2
     var writeRequest = 1
 
+
+
     val system = ActorSystem("ChordProtocolHW4")
 
     /*for(countUser <-0 to noOfUsers-1){
@@ -440,6 +521,7 @@ object chordMainMethod {
     val Master = system.actorOf(Props(new ChordMainActor(totalNodes,minMsgs,maxMsgs,listFileItems,
       simulationDuration,simulationMark,system)), name = "User_1")
     Master ! "startProcess"
+
 
     //}
   }
