@@ -43,7 +43,8 @@ public class chordImplemen {
 
     }
     void userInput(){
-        while(true) {
+        int k=0;
+        while(k<3) {
             node_details existing_node_j=list_nodes.get(0);
             System.out.println("Enter next node id to enter ring. ");
             Scanner in = new Scanner(System.in);
@@ -76,6 +77,19 @@ public class chordImplemen {
             display_all_existing_nodes();
 
 
+
+        k++;
+        }
+
+        k=0;
+        while(k<4) {
+            System.out.println("Let's do lookup ");
+            System.out.println("Enter item id to find node which should contain this item ");
+            Scanner in = new Scanner(System.in);
+            int id = in.nextInt();
+
+            int successor=list_nodes.get(0).Locate_Successor(id);
+            System.out.println("Item should be at: "+successor);
 
 
         }
@@ -199,7 +213,8 @@ class node_details {
         node_details successor_obj=new chordImplemen().get_node(this.successor);
         int x=successor_obj.predecessor;
         if(     x > -1 &&
-                ((this.id>this.successor && (x > this.id || x < this.successor)) || (this.id<this.successor && x > this.id && x < this.successor)
+                ((this.id>this.successor && (x > this.id || x < this.successor)) ||
+                        (this.id<this.successor && x > this.id && x < this.successor)
                 || this.id == this.successor && x != this.id ))
          {
             this.successor = x;
@@ -213,8 +228,9 @@ class node_details {
         if(this.predecessor==-1 ||
 
                 ((this.predecessor>this.id && (node_j.id > this.predecessor || node_j.id < this.id)) ||
-                        (this.predecessor>this.id && node_j.id > this.predecessor && node_j.id < this.id)
+                        (this.predecessor<this.id && node_j.id > this.predecessor && node_j.id < this.id)
                         || this.predecessor == this.id && node_j.id != this.predecessor ))
+        //updated condition here
 
         {
             //transfer keys
