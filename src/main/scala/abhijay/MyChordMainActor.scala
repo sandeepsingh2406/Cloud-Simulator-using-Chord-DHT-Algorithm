@@ -10,6 +10,8 @@ import scala.util.Random
   * Created by avp on 11/20/2016.
   */
 
+case class CreateRing(nodeindex : Int)
+
 class MyChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
                      SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
 
@@ -44,6 +46,13 @@ class MyChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItem
       }
       self ! ActivateNodeInRing(0)
 
+      //self ! CreateRing(0)
+    }
+
+      /* Create a ring for the first time*/
+
+    case CreateRing(nodeIndex : Int) =>{
+
     }
 
     /* assign the nodes in ring*/
@@ -53,6 +62,7 @@ class MyChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItem
 
       /* use the akka actor selection to call each actor as initiated for total nodes */
       val eachnodeactor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
+      //eachnodeactor.nod
       NodeArrayActors(nodeIndex)(1) = "1" //assuming this node will be successfully joined - making this active
       eachnodeactor ! JoinNode(NodeArrayActors(nodeIndex),nodeIndex)
     }
@@ -122,5 +132,7 @@ class MyChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItem
     }
     activeNodeHashes
   }
+
+
 }
 

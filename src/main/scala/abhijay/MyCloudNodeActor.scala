@@ -42,10 +42,11 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
     }
 
     case JoinNode(nodeArrayActors:Array[String], nodeIndex:Int) => {
+
       isActiveNode = 1
       successor = nodeIndex
       println("In Join node for each actor reperesenting the active node in ring - now joining ring")
-      for(i<-0 to m-1)
+      for(i<-0 until m)
       {
 //        println("Value inserted at index: "+i+" is: "+((Index+math.pow(2,i).toInt)%TotalNodes))
         /* calculate the node that the current node actor*/
@@ -53,7 +54,7 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
         fingerTable(i)(1) = nodeIndex
       }
 
-      println("Get Successor for node: "+nodeIndex)
+      println("In JoinNode: Get Successor for node: "+nodeIndex)
 
       createAndUpdateFingers(nodeIndex);
 //      fillFingerTable(nodeIndex)
@@ -113,7 +114,7 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
     }
 
     case GetSuccessor(tempNode: Int) =>{
-      println("Get Successor for node: "+tempNode)
+      println("in GetSuccessor: Get Successor for node: "+tempNode)
       sender ! successor
     }
 
@@ -139,7 +140,9 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
 
     case GetClosesNodes(fingerNodeValue : Int,tempCurrNode : Int) => {
 
+      println("#### inside GetClosesNodes")
       val tempNode = closest_preceding_finger(fingerNodeValue,tempCurrNode)
+      println("#### after closest_preceding_finger() call in GetClosesNodes")
       sender ! tempNode
 
     }
@@ -149,7 +152,7 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
   /* fillFingerTable: fill the respective successor values in a finger table*/
   def fillFingerTable(currActorNodeIndex : Int): Unit ={
 
-    println("Inside get successor for node: "+currActorNodeIndex)
+    println("Inside fillFingerTable: get successor for node: "+currActorNodeIndex)
     for(i <- 0 until m){
       val tempFingerNode = fingerTable(i)(0)
       println("fillFingerTable() actorIndex: "+currActorNodeIndex+" with finger table node: "+i+" and value :"+tempFingerNode)
@@ -206,9 +209,13 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
       try
       {
 
-        val futureNode = tempActor ? GetClosesNodes(fingerNodeValue, tempCurrNode)
+//        val futureNode = tempActor ? GetClosesNodes(fingerNodeValue, tempCurrNode)
+        println("#### calling closest_preceding_finger()");
+//        val futureNode = self.asInstanceOf[MyCloudNodeActor].closest_preceding_finger(fingerNodeValue, tempCurrNode)
 
-        tempCurrNode = Await.result(futureNode, timeout.duration).asInstanceOf[Int]
+//        tempCurrNode = Await.result(futureNode, timeout.duration).asInstanceOf[Int]
+
+        println("#### returned from closest_preceding_finger()");
 
 
         tempResult = -1
@@ -225,7 +232,8 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
       }
       catch {
         case ex: Exception => {
-          println("exception in get get closes nodes")
+          println("exception in get get closes nodes, tempResult=" + tempResult)
+          tempResult += 1
         }
       }
 
@@ -238,6 +246,7 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
   def closest_preceding_finger(fingerNodeVale : Int, currActorNodeIndex : Int):Int={
     println("inside closest preceding finger : ")
     var count:Int = m-1
+/*
     while(count >=0 ){
       println("Inside while with count :"+count)
       println("Comparing : "+fingerTable(count)(1)+" > "+currActorNodeIndex+" && "+fingerTable(count)(1)+" < "+fingerNodeVale)
@@ -260,6 +269,7 @@ class MyCloudNodeActor(TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: 
 
       count = count - 1
     }
+*/
     println("else returning : "+currActorNodeIndex)
     return currActorNodeIndex
   }
