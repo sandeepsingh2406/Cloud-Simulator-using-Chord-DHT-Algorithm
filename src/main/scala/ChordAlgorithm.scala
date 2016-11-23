@@ -12,6 +12,8 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
+case class GetNodeHashedActors(nodeIndex : Int)
+
 case class FindSuccessor(fingerNodeValue : Int ,currActorNodeIndex: Int)
 
 case class LocateSuccessor(nodeIndex : Int)
@@ -28,7 +30,7 @@ case object FindNodeSuccessor
 
 case class StabilizeRing(nodeIndex : Int)
 
-case class CreateRing(nodeArrayActors:Array[Int],nodeIndex:Int)
+case class CreateRing(nodeArrayActors:Array[String],nodeIndex:Int)
 
 case class PrintFingerTable(nodeIndex : Int)
 
@@ -47,7 +49,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
                      SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
 
   var activenodes: Int = 0
-  var NodeArrayActors  = Array.ofDim[Int](TotalNodes)
+  var NodeArrayActors  = Array.ofDim[String](TotalNodes)
   var m:Int = 0
   implicit val timeout = Timeout(20 seconds)
 
@@ -74,7 +76,8 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       for (i <- 0 until TotalNodes) {
         println("Inside for loop - instantiating actors for each computer in cloud with node: "+i)
         val workerNodes = ChordActorSys.actorOf(Props(new CloudNodeActor(NodeArrayActors(i),TotalNodes, activenodes, MinMsgs, MaxMsgs, listFileItems, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
-        workerNodes ! "intiateEachNode"
+        val futureWorker = workerNodes ? "intiateEachNode"
+        println(Await.result(futureWorker, timeout.duration).asInstanceOf[String])
       }
       println("Enter first node for insertion: ")
       val node1 = scala.io.StdIn.readInt()
@@ -98,6 +101,10 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
       FetchFingerTable
 
       self ! ActivateOtherNode(nodeIndex)
+    }
+
+    case GetNodeHashedActors(nodeIndex : Int) => {
+      sender ! NodeArrayActors(nodeIndex)
     }
 
     case ActivateOtherNode(existingNode : Int) => {
@@ -163,55 +170,48 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
     }
   }
 
-  def getHash(id: String, totalNodes: Int): Int = {
-
-    var key = MessageDigest.getInstance("SHA-256").digest(id.getBytes("UTF-8")).map("%02X" format _).mkString.trim()
-    println("Original hash value: "+key+" for node: "+id)
-    if (key.length() > 15) {
-      key = key.substring(key.length() - 15);
-    }
-    (java.lang.Long.parseLong(key,16)%totalNodes).toInt
-
-  }
-
   def md5(s: String) = { MessageDigest.getInstance("MD5").digest(s.getBytes).toString }
 
   def InitializeNodeHashTable: Unit = {
 
-    println("In finger table initialization -> for Active nodes in the system : " + activenodes)
-
     var count:Int = 0
     var nodeString:String = ""
-    var hashValue:Int = -1
+    var hashValue:String = ""
 
     /* udpate the array to store the hashed value for a random generated string for only the active nodes */
-    for (count <- 0 until TotalNodes) {
+    while (count < TotalNodes) {
 
-      nodeString = "node_"+count
-      hashValue = getHash(nodeString,TotalNodes)
+      /* used a  randome string for now- generally this will be the computers IP address */
+      nodeString = Random.alphanumeric.take(25).mkString
+
+      hashValue = chordMainMethod.getHash(nodeString,m)
+
+      //hashValue = getHash(nodeString,TotalNodes)
       println("Hash value for: "+nodeString+" is: "+hashValue)
 
       /**  hashed value for each active node : **/
-      NodeArrayActors(count) = hashValue
-
+      if(NodeArrayActors.contains(hashValue)){
+        //skip this , count not incremented
+      }
+      else{
+        NodeArrayActors(count) = hashValue
+        count = count + 1
+      }
     }
-    /*scala.util.Sorting.quickSort(NodeArrayActors)*/
+    scala.util.Sorting.quickSort(NodeArrayActors)
     /* Print Sort the calculated hashes */
-   /* for (count <- 0 until TotalNodes) {
-      println("Sorted Hashed Node at Index: "+count+" key: "+NodeArrayActors(count))
-    }*/
+    for (count <- 0 until TotalNodes) {
+      chordMainMethod.SortedHashedActor += NodeArrayActors(count)
+      println("Sorted Hashed Node at Index: "+count+" key: "+chordMainMethod.SortedHashedActor(count))
+    }
     /* activate the first node in the ring */
 
-  }
-
-  def getHashedValueForNode(node:Int): Int ={
-    NodeArrayActors(node)
   }
 
 }
 
 /* Actor class for each of the nodes present in the cloud. These are the total number of nodes int the cloud*/
-class CloudNodeActor(HashedValue: Int,TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
+class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
                      SimluationMark : Int,Index: Int,ChordActorSys:ActorRef) extends Actor {
 
   var nodeHopsCounter:Int=0
@@ -225,7 +225,8 @@ class CloudNodeActor(HashedValue: Int,TotalNodes:Int, ActiveNodes: Int ,MinMsgs:
 
   def receive = {
     case "intiateEachNode" => {
-      println("Initiate Node")
+      println("Initiate Node: "+Index+" with Hashed Value: "+HashedValue)
+      sender ! "done"
     }
 
     case JoinNode(newNode:  Int,existingNode : Int) => {
@@ -250,7 +251,7 @@ class CloudNodeActor(HashedValue: Int,TotalNodes:Int, ActiveNodes: Int ,MinMsgs:
       sender() ! "JoinNode Done for: "+newNode
     }
 
-    case CreateRing(nodeArrayActors:Array[Int], nodeIndex:Int) => {
+    case CreateRing(nodeArrayActors:Array[String], nodeIndex:Int) => {
       isActiveNode = 1
       successor = nodeIndex
 
@@ -363,21 +364,6 @@ class CloudNodeActor(HashedValue: Int,TotalNodes:Int, ActiveNodes: Int ,MinMsgs:
       fetchRes = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
     }
 
-    //tempActor.forward(GetSuccessor(newSucc))
-    //tempActor ! GetSuccessor(newSucc)
-//    val result : Future[Int] = tempActor.ask(GetSuccessor(newSucc))(100 seconds).mapTo[Int]
-//    result.onSuccess {
-//      case output: Int => {
-//        fetchRes = output
-//        //fingerTable(fingerIndex)(1) = fetchRes
-//        //println("find_succ => fetch result from on success of "+currActorNodeIndex +" value in finger table: at node: "+fingerIndex+" value as: " +fetchRes)
-//      }
-//    }
-
-    /*while(fetchRes == -1) {
-      println("find_succe - thread.sleep")
-      //wait(100)
-    }*/
      println("find_succ : after on success: "+fetchRes)
 
     return fetchRes
@@ -481,8 +467,18 @@ class CloudNodeActor(HashedValue: Int,TotalNodes:Int, ActiveNodes: Int ,MinMsgs:
 
 object chordMainMethod {
 
+  var SortedHashedActor : ListBuffer[String] = new ListBuffer[String]()
 
   var ActorJoined : ListBuffer[Int] = new ListBuffer[Int]()
+
+  def getHash(key:String, m : Int): String = {
+
+    val sha_instance = MessageDigest.getInstance("SHA-1")
+    var sha_value:String =sha_instance.digest(key.getBytes).foldLeft("")((s:String, b: Byte) => s + Character.forDigit((b & 0xf0) >> 4, 16) +Character.forDigit(b & 0x0f, 16))
+    var generated_hash:String =sha_value.substring(0,m-1)
+    return generated_hash
+  }
+
   def main(args: Array[String]) {
     /* The inputs : the number of users, the */
     /* if (args.length != 2)
