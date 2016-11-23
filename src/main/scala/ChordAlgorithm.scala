@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 case class GetNodeHashedActors(nodeIndex : Int)
 
-case class FindSuccessor(fingerNodeValue : Int ,currActorNodeIndex: Int)
+case class FindSuccessor(fingerNodeValue : String ,currActorNodeIndex: Int, requestOrigin : String)
 
 case class LocateSuccessor(nodeIndex : Int)
 
@@ -42,11 +42,10 @@ case class GetSuccessor(tempNode: Int)
 
 case class NotifyNode(notifyThisNode : Int, currentCallingNode : Int)
 
-case class GetClosesNodes(fingerNodeValue : Int,tempCurrNode : Int)
+case class GetClosesNodes(fingerNodeValue : String ,tempCurrNode : Int, requestOrigin : String)
 
 
-class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
-                     SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
+class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
 
   var activenodes: Int = 0
   var NodeArrayActors  = Array.ofDim[String](TotalNodes)
@@ -75,7 +74,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
 
       for (i <- 0 until TotalNodes) {
         println("Inside for loop - instantiating actors for each computer in cloud with node: "+i)
-        val workerNodes = ChordActorSys.actorOf(Props(new CloudNodeActor(NodeArrayActors(i),TotalNodes, activenodes, MinMsgs, MaxMsgs, listFileItems, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
+        val workerNodes = ChordActorSys.actorOf(Props(new CloudNodeActor(NodeArrayActors(i),TotalNodes, activenodes, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
         val futureWorker = workerNodes ? "intiateEachNode"
         println(Await.result(futureWorker, timeout.duration).asInstanceOf[String])
       }
@@ -109,7 +108,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
 
     case ActivateOtherNode(existingNode : Int) => {
 
-      for(i<- 0 until TotalNodes-2)
+      for(i<- 0 until TotalNodes-1)
       {
         val random = new Random
         val newRandom = chordMainMethod.ActorJoined(random.nextInt(chordMainMethod.ActorJoined.length))
@@ -130,7 +129,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
         println("Existing nodes: "+chordMainMethod.ActorJoined)
 
 
-        for(counter <- 0 until 3){
+        for(counter <- 0 until chordMainMethod.ActorJoined.length){
 
           for(insidecounter <- 0 until chordMainMethod.ActorJoined.length)
           {
@@ -153,9 +152,15 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
           }
           println("After adding: "+newNode )
           FetchFingerTable
+
+          println("Nodes added in system: ")
+          for(i <- 0 until chordMainMethod.ActorJoined.length){
+            println(" "+chordMainMethod.ActorJoined(i))
+          }
         }
 
       }
+      println("Done adding all nodes")
 
     }
 
@@ -211,7 +216,7 @@ class ChordMainActor(TotalNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems 
 }
 
 /* Actor class for each of the nodes present in the cloud. These are the total number of nodes int the cloud*/
-class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,MinMsgs: Int, MaxMsgs: Int, listFileItems : String,SimulationDuration: Int,
+class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,SimulationDuration: Int,
                      SimluationMark : Int,Index: Int,ChordActorSys:ActorRef) extends Actor {
 
   var nodeHopsCounter:Int=0
@@ -243,7 +248,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,MinMs
       }
 
       val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+existingNode.toString)
-      val futureNodeSucc = tempActor ? FindSuccessor(newNode,existingNode)
+      val futureNodeSucc = tempActor ? FindSuccessor(newNode.toString,existingNode,"self")
 
       this.successor = Await.result(futureNodeSucc, timeout.duration).asInstanceOf[Int]
 
@@ -313,14 +318,14 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,MinMs
       println("New predecessor for node: "+currentCallingNode+" value is: "+this.predecessor)
     }
 
-    case GetClosesNodes(fingerNodeValue : Int,tempCurrNode : Int) => {
+    case GetClosesNodes(fingerNodeValue : String ,tempCurrNode : Int, requestOrigin : String) => {
 
-      val tempNode = closest_preceding_finger(fingerNodeValue,tempCurrNode)
+      val tempNode = closest_preceding_finger(fingerNodeValue,tempCurrNode, requestOrigin)
       sender ! tempNode
     }
 
-    case FindSuccessor(fingerNodeValue : Int ,currActorNodeIndex: Int) =>{
-      val tempSuccVal = find_successor(fingerNodeValue,currActorNodeIndex)
+    case FindSuccessor(fingerNodeValue : String ,currActorNodeIndex: Int, requestOrigin : String) =>{
+      val tempSuccVal = find_successor(fingerNodeValue,currActorNodeIndex,requestOrigin)
       sender ! tempSuccVal
     }
 
@@ -338,38 +343,39 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,MinMs
     for(i <- 0 until m){
       val tempFingerNode = fingerTable(i)(0)
       println("Call find_successor for  node: "+currActorNodeIndex+" with finger table node: "+i+" and value :"+tempFingerNode)
-      val getSucc = find_successor(tempFingerNode,currActorNodeIndex)
+      val getSucc = find_successor(tempFingerNode.toString,currActorNodeIndex, "self")
       println("New successor received as: "+getSucc)
       fingerTable(i)(1) = getSucc
     }
   }
 
-  def find_successor(fingerNodeValue : Int ,currActorNodeIndex: Int): Int = {
+  def find_successor(fingerNodeValue : String ,currActorNodeIndex: Int, requestOrigin : String): Int = {
     println("Inside Find successor. Call find_predecessor for node: "+currActorNodeIndex+" with finger table start value: "+fingerNodeValue)
 
     var fetchRes : Int = -1
 
-    val newSucc = find_predecessor(fingerNodeValue,currActorNodeIndex)
+    val newSucc = find_predecessor(fingerNodeValue,currActorNodeIndex,requestOrigin)
 
-    if(currActorNodeIndex == newSucc){
-      println("Current node same as prev")
-      fetchRes = this.successor
-    }
-    else {
-      val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + newSucc.toString)
+      if (currActorNodeIndex == newSucc) {
+        println("Current node same as prev")
+        fetchRes = this.successor
+      }
+      else {
+        val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + newSucc.toString)
 
 
-      val futureSucc = tempActor ? GetSuccessor(newSucc)
+        val futureSucc = tempActor ? GetSuccessor(newSucc)
 
-      fetchRes = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
-    }
+        fetchRes = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
+      }
+
 
      println("find_succ : after on success: "+fetchRes)
 
     return fetchRes
   }
 
-  def find_predecessor(fingerNodeValue : Int ,currActorNodeIndex: Int): Int ={
+  def find_predecessor(fingerNodeValue : String ,currActorNodeIndex: Int, requestOrigin : String): Int ={
 
     println("Inside find predecssor")
     var tempCurrNode_dash : Int = 0
@@ -377,56 +383,100 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,MinMs
     var tempSucc = this.successor
     println("find predecssor : Finger table : Successor for node: "+currActorNodeIndex+" value: of finger[1].node= "+tempSucc)
 
-    //println("inside find_predecessor : actor: "+currActorNodeIndex+" : predecessor "+tempActorPred.asInstanceOf[].predecessor.toString)
+    if(requestOrigin.toLowerCase().equals("self"))
+    {
+      while (((tempCurrNode > tempSucc && (fingerNodeValue.toInt <= tempCurrNode && fingerNodeValue.toInt > tempSucc)) ||
+        (tempCurrNode < tempSucc && (fingerNodeValue.toInt <= tempCurrNode || fingerNodeValue.toInt > tempSucc)))
+        && (tempCurrNode != tempSucc)) {
+        if (tempCurrNode == currActorNodeIndex) {
+          println("tempcurrnode = curractornode")
+          tempCurrNode_dash = closest_preceding_finger(fingerNodeValue, tempCurrNode,requestOrigin)
+        }
+        else {
 
-    while(((tempCurrNode > tempSucc && (fingerNodeValue <= tempCurrNode && fingerNodeValue > tempSucc)) ||
-      (tempCurrNode < tempSucc && (fingerNodeValue <= tempCurrNode || fingerNodeValue > tempSucc)))
-      &&  (tempCurrNode != tempSucc )) {
-      if (tempCurrNode == currActorNodeIndex)
+          println("tempcurrnode != curractornode. tempCurrNode: " + tempCurrNode)
+          val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode.toString)
+          val futureNode = tempActor ? GetClosesNodes(fingerNodeValue, tempCurrNode,requestOrigin)
+
+          tempCurrNode_dash = Await.result(futureNode, timeout.duration).asInstanceOf[Int]
+
+          println("after await in find_predecessor: " + tempCurrNode)
+        }
+        if (tempCurrNode_dash != tempCurrNode) {
+          val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode_dash.toString)
+          val futureSucc = tempActor ? GetSuccessor(tempCurrNode_dash)
+          tempSucc = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
+          tempCurrNode = tempCurrNode_dash
+        }
+      }
+    }
+    else if(requestOrigin.toLowerCase().equals("user"))
+    {
+      val tempCurrNode_Hash = chordMainMethod.SortedHashedActor(tempCurrNode)
+      val tempSucc_Hash = chordMainMethod.SortedHashedActor(tempSucc)
+
+      while (((tempCurrNode_Hash > tempSucc_Hash && (fingerNodeValue <= tempCurrNode_Hash && fingerNodeValue > tempSucc_Hash)) ||
+        (tempCurrNode_Hash < tempSucc_Hash && (fingerNodeValue <= tempCurrNode_Hash || fingerNodeValue > tempSucc_Hash)))
+        && (tempCurrNode_Hash != tempSucc_Hash))
       {
-        println("tempcurrnode = curractornode")
-        tempCurrNode_dash = closest_preceding_finger(fingerNodeValue, tempCurrNode)
+        if (tempCurrNode == currActorNodeIndex) {
+          println("tempcurrnode = curractornode")
+          tempCurrNode_dash = closest_preceding_finger(fingerNodeValue, tempCurrNode,requestOrigin)
+        }
+        else
+        {
+          println("tempcurrnode != curractornode. tempCurrNode: " + tempCurrNode)
+          val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode.toString)
+          val futureNode = tempActor ? GetClosesNodes(fingerNodeValue, tempCurrNode,requestOrigin)
+
+          tempCurrNode_dash = Await.result(futureNode, timeout.duration).asInstanceOf[Int]
+
+          println("after await in find_predecessor: " + tempCurrNode)
+        }
+        if (tempCurrNode_dash != tempCurrNode) {
+          val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode_dash.toString)
+          val futureSucc = tempActor ? GetSuccessor(tempCurrNode_dash)
+          tempSucc = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
+          tempCurrNode = tempCurrNode_dash
+        }
       }
-      else {
-
-        println("tempcurrnode != curractornode. tempCurrNode: "+tempCurrNode)
-        val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode.toString)
-        val futureNode = tempActor ? GetClosesNodes(fingerNodeValue, tempCurrNode)
-
-        tempCurrNode_dash= Await.result(futureNode, timeout.duration).asInstanceOf[Int]
-
-        println("after await in find_predecessor: "+tempCurrNode)
-      }
-      if(tempCurrNode_dash != tempCurrNode){
-        val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode_dash.toString)
-        val futureSucc = tempActor ? GetSuccessor(tempCurrNode_dash)
-        tempSucc = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
-        tempCurrNode = tempCurrNode_dash
-      }
-
-
     }
 
     println("Returning from find predecessor with value: "+tempCurrNode)
     return tempCurrNode
   }
 
-  def closest_preceding_finger(fingerNodeVale : Int, currActorNodeIndex : Int):Int={
+  def closest_preceding_finger(fingerNodeVale : String, currActorNodeIndex : Int, requestOrigin : String):Int={
     println("inside closest preceding finger : ")
     var count:Int = m
-    while(count > 0 )
+
+    if(requestOrigin.toLowerCase().equals("self")) {
+      while (count > 0) {
+        if ((currActorNodeIndex > fingerNodeVale.toInt && (fingerTable(count - 1)(1) > currActorNodeIndex ||
+          fingerTable(count - 1)(1) < fingerNodeVale.toInt))
+          || (currActorNodeIndex < fingerNodeVale.toInt && fingerTable(count - 1)(1) > currActorNodeIndex && fingerTable(count - 1)(1) < fingerNodeVale.toInt)
+          || (currActorNodeIndex == fingerNodeVale.toInt && currActorNodeIndex != fingerTable(count - 1)(1)))
+
+          return fingerTable(count - 1)(1);
+
+        count = count - 1
+      }
+    }
+    else if(requestOrigin.toLowerCase().equals("user"))
     {
-      println("Inside while with count :"+count)
+      val currActorNodeIndex_hash = chordMainMethod.SortedHashedActor(currActorNodeIndex)
+      val fingerTableValue_hash = chordMainMethod.SortedHashedActor(fingerTable(count - 1)(1))
 
-      if  ((currActorNodeIndex > fingerNodeVale  && (fingerTable(count-1)(1) > currActorNodeIndex ||
-        fingerTable(count-1)(1) < fingerNodeVale))
-        || (currActorNodeIndex < fingerNodeVale && fingerTable(count-1)(1) > currActorNodeIndex && fingerTable(count-1)(1) < fingerNodeVale)
-        || (currActorNodeIndex == fingerNodeVale && currActorNodeIndex != fingerTable(count-1)(1))  )
+      while (count > 0) {
+        if ((currActorNodeIndex_hash > fingerNodeVale && (fingerTableValue_hash > currActorNodeIndex_hash ||
+          fingerTableValue_hash < fingerNodeVale))
+          || (currActorNodeIndex_hash < fingerNodeVale && fingerTableValue_hash > currActorNodeIndex_hash && fingerTableValue_hash < fingerNodeVale)
+          || (currActorNodeIndex_hash == fingerNodeVale && currActorNodeIndex_hash != fingerTableValue_hash))
 
+          return fingerTable(count - 1)(1);
 
-        return fingerTable(count-1)(1);
-
-      count = count - 1
+        count = count - 1
+      }
     }
     println("else returning current node actor index : "+currActorNodeIndex)
     return currActorNodeIndex
@@ -499,25 +549,21 @@ object chordMainMethod {
     var readRequest = args(7).toInt
     var writeRequest = args(8).toInt*/
 
-    var noOfUsers = 2
-    var totalNodes = 8
-    var minMsgs = 1
-    var maxMsgs = 3
-    var listFileItems = "Check Items"
-    var simulationDuration = 10
-    var simulationMark = 2
-    var readRequest = 2
-    var writeRequest = 1
+    println("Enter total nodes in system: ")
+    val totalNodes = scala.io.StdIn.readInt()
 
+    println("Enter system simuation duration: ")
+    val simulationDuration = scala.io.StdIn.readInt()
 
+    println("Enter system simuation mark: ")
+    val simulationMark = scala.io.StdIn.readInt()
 
     val system = ActorSystem("ChordProtocolHW4")
 
     /*for(countUser <-0 to noOfUsers-1){
 
     }*/
-    val Master = system.actorOf(Props(new ChordMainActor(totalNodes,minMsgs,maxMsgs,listFileItems,
-      simulationDuration,simulationMark,system)), name = "User_1")
+    val Master = system.actorOf(Props(new ChordMainActor(totalNodes,simulationDuration,simulationMark,system)), name = "MainActor")
     Master ! "startProcess"
 
 
