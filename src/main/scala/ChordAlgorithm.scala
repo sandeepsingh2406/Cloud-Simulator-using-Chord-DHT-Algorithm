@@ -49,7 +49,7 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
   var activenodes: Int = 0
   var NodeArrayActors  = Array.ofDim[String](TotalNodes)
   var m:Int = 0
-  implicit val timeout = Timeout(100 seconds)
+  implicit val timeout = Timeout(20 seconds)
 
   def receive = {
 
@@ -325,7 +325,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
     }
     case GetHashedValue(nodeIndex : Int) =>{
       val orignalSender = sender
-      println("Get Hashed Value for node: "+nodeIndex+" value: "+this.HashedValue)
+      //println("Get Hashed Value for node: "+nodeIndex+" value: "+this.HashedValue)
       orignalSender ! this.HashedValue
     }
 
@@ -548,20 +548,20 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
       var fingerTableValue_hash :String = ""
 
-      val tempIndex = fingerTable(count - 1)(1)
-      if(tempIndex != currActorNodeIndex)
-      {
-        val node = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempIndex.toString)
-
-        val futureHash = node ? GetHashedValue(tempIndex)
-        fingerTableValue_hash = Await.result(futureHash, timeout.duration).asInstanceOf[String]
-      }
-      else{
-        fingerTableValue_hash = this.HashedValue
-      }
-
       while (count > 0)
       {
+        val tempIndex = fingerTable(count - 1)(1)
+        if(tempIndex != currActorNodeIndex)
+        {
+          val node = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempIndex.toString)
+          val futureHash = node ? GetHashedValue(tempIndex)
+          fingerTableValue_hash = Await.result(futureHash, timeout.duration).asInstanceOf[String]
+        }
+        else
+        {
+          fingerTableValue_hash = this.HashedValue
+        }
+        println("Closest preceeding : fingertable(count-1)(1):"+tempIndex+" hashed value: "+fingerTableValue_hash )
 
         if ((currActorNodeIndex_hash > fingerNodeVale && (fingerTableValue_hash > currActorNodeIndex_hash ||
           fingerTableValue_hash < fingerNodeVale))
@@ -572,17 +572,6 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         }
 
         count = count - 1
-        val tempIndex = fingerTable(count - 1)(1)
-        if(tempIndex != currActorNodeIndex)
-        {
-          val node = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempIndex.toString)
-
-          val futureHash = node ? GetHashedValue(tempIndex)
-          fingerTableValue_hash = Await.result(futureHash, timeout.duration).asInstanceOf[String]
-        }
-        else{
-          fingerTableValue_hash = this.HashedValue
-        }
 
       }
     }
