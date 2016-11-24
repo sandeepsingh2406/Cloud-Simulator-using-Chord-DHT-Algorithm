@@ -49,11 +49,12 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
   var activenodes: Int = 0
   var NodeArrayActors  = Array.ofDim[String](TotalNodes)
   var m:Int = 0
-  implicit val timeout = Timeout(20 seconds)
+  implicit val timeout = Timeout(100 seconds)
 
   def receive = {
 
     case "startProcess" => {
+      val originalSender = sender
       println("In Start Process")
       println("Master Node has been Initiated")
       println("Total nodes in the cloud: " + TotalNodes)
@@ -78,7 +79,7 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
         println(Await.result(futureWorker, timeout.duration).asInstanceOf[String])
       }
 
-      sender ! "done"
+      originalSender ! "done"
 
     }
 
@@ -213,7 +214,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
   var nodeHopsCounter:Int=0
   val m: Int = ((Math.log10(TotalNodes.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
   val fingerTable = Array.ofDim[Int](m,2)
-  implicit val timeout = Timeout(20 seconds)
+  implicit val timeout = Timeout(100 seconds)
   var predecessor :Int = -1
   var successor : Int = -1
   var next_finger: Int = 1
@@ -451,16 +452,16 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       var tempCurrNode_Hash = this.HashedValue
       println("hash for tempCurrNode : "+tempCurrNode+" tempCurrNode_Hash: "+tempCurrNode_Hash)
 
-      var tempSucc_Hash : String = ""
+      var tempSucc_Hash : String = chordMainMethod.SortedHashedActor(tempSucc)
 
-      if (tempSucc != currActorNodeIndex){
+     /* if (tempSucc != currActorNodeIndex){
         val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempSucc.toString)
         val futureNode = tempActor ? GetHashedValue(tempSucc)
         tempSucc_Hash = Await.result(futureNode, timeout.duration).asInstanceOf[String]
       }
       else{
         tempSucc_Hash = this.HashedValue
-      }
+      }*/
       println("hash for tempSucc : "+tempSucc+" tempSucc_Hash: "+tempSucc_Hash)
 
       println("item hash compared : "+fingerNodeValue)
@@ -494,24 +495,28 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
           tempSucc = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
           tempCurrNode = tempCurrNode_dash
 
-          if (tempCurrNode != currActorNodeIndex){
+          tempCurrNode_Hash = chordMainMethod.SortedHashedActor(tempCurrNode)
+
+          /*if (tempCurrNode != currActorNodeIndex){
             val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempCurrNode.toString)
             val futureNode = tempActor ? GetHashedValue(tempCurrNode)
             tempCurrNode_Hash = Await.result(futureNode, timeout.duration).asInstanceOf[String]
           }
           else{
             tempCurrNode_Hash = this.HashedValue
-          }
+          }*/
           println("hash for tempCurrNode : "+tempCurrNode+" tempCurrNode_Hash: "+tempCurrNode_Hash)
 
-          if (tempSucc != currActorNodeIndex){
+          tempSucc_Hash = chordMainMethod.SortedHashedActor(tempSucc)
+
+          /*if (tempSucc != currActorNodeIndex){
             val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempSucc.toString)
             val futureNode = tempActor ? GetHashedValue(tempSucc)
             tempSucc_Hash = Await.result(futureNode, timeout.duration).asInstanceOf[String]
           }
           else{
             tempSucc_Hash = this.HashedValue
-          }
+          }*/
           println("hash for tempSucc : "+tempSucc+" tempSucc_Hash: "+tempSucc_Hash)
 
           println("item hash compared : "+fingerNodeValue)
@@ -546,12 +551,12 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
     {
       val currActorNodeIndex_hash = this.HashedValue
 
-      var fingerTableValue_hash :String = ""
-
       while (count > 0)
       {
         val tempIndex = fingerTable(count - 1)(1)
-        if(tempIndex != currActorNodeIndex)
+        var fingerTableValue_hash :String = chordMainMethod.SortedHashedActor(tempIndex)
+
+        /*if(tempIndex != currActorNodeIndex)
         {
           val node = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempIndex.toString)
           val futureHash = node ? GetHashedValue(tempIndex)
@@ -560,7 +565,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         else
         {
           fingerTableValue_hash = this.HashedValue
-        }
+        }*/
         println("Closest preceeding : fingertable(count-1)(1):"+tempIndex+" hashed value: "+fingerTableValue_hash )
 
         if ((currActorNodeIndex_hash > fingerNodeVale && (fingerTableValue_hash > currActorNodeIndex_hash ||
@@ -614,7 +619,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
 object chordMainMethod {
 
-  implicit val timeout = Timeout(20 seconds)
+  implicit val timeout = Timeout(100 seconds)
 
   var SortedHashedActor : ListBuffer[String] = new ListBuffer[String]()
 
