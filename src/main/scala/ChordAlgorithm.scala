@@ -179,11 +179,11 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
     while (count < TotalNodes) {
 
       /* used a  random string for now- generally this will be the computers IP address */
-      nodeString = Random.alphanumeric.take(25).mkString
+      nodeString = Random.alphanumeric.take(20).mkString.toLowerCase()
 
+      //hashValue = chordMainMethod.md5(nodeString,m)
       hashValue = chordMainMethod.getHash(nodeString,m)
 
-      //hashValue = getHash(nodeString,TotalNodes)
       println("Hash value for: "+nodeString+" is: "+hashValue)
 
       /**  hashed value for each active node : **/
@@ -635,6 +635,10 @@ object chordMainMethod {
 
   var nodeSpace : Int = -1
 
+  def md5(s: String, m : Int) : String = {
+    return MessageDigest.getInstance("MD5").digest(s.getBytes).toString
+  }
+
   def getHash(key:String, m : Int): String = {
 
     val sha_instance = MessageDigest.getInstance("SHA-1")
@@ -733,7 +737,7 @@ object chordMainMethod {
     println("insert item: "+itemName+" at node: "+nodeIndex)
     val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
     //println(actorRef.pathString)
-    val future = actorRef ? PutItemDetail(itemName,itemDetail,nodeIndex)
+    val future = actorRef ? PutItemDetail(itemName.toLowerCase(),itemDetail,nodeIndex)
 
     val itemInserted = Await.result(future, timeout.duration).asInstanceOf[String]
 
