@@ -52,9 +52,11 @@ class Service(){
 
     object Route2 {
       val route =
-        parameters('getMovie) { (moviename) =>
+        parameters('getMovie) { (moviename1) =>
           //output goes here
           println("getMovie")
+          var moviename=moviename1.replaceAll("^\"|\"$", "");
+
 
 
           val node_id=chordMainMethod.LookupItem(moviename.trim).toInt
@@ -71,9 +73,11 @@ class Service(){
 
     object Route3 {
       val route =
-        parameters('putMovie, 'MovieDetails) { (moviename, moviedetails) =>
+        parameters('putMovie, 'MovieDetails) { (moviename1, moviedetails1) =>
           //output goes here
           println("putMovie")
+          var moviename=moviename1.replaceAll("^\"|\"$", "");
+          var moviedetails=moviedetails1.replaceAll("^\"|\"$", "");
 
           val node_id=chordMainMethod.LookupItem(moviename.trim).toInt
           println("Movie should be at "+node_id)
@@ -96,8 +100,8 @@ class Service(){
 
     object Route4 {
       val route =
-        parameters('insertNode) { (nodeId) =>
-
+        parameters('insertNode) { (nodeId1) =>
+          var nodeId=nodeId1.replaceAll("^\"|\"$", "").toInt;
           println("insertNode, list size:"+listOfNodes.size)
 
           if(listOfNodes.size==0)
@@ -105,16 +109,16 @@ class Service(){
 
               println("listOfNodes.size==0")
               //create ring called
-              val abc=chordMainMethod.CreateRingWithNode(nodeId.toInt)
+              val abc=chordMainMethod.CreateRingWithNode(nodeId)
               println("Back from ring :"+abc+", Node: "+nodeId)
-              listOfNodes += nodeId.toInt
+              listOfNodes += nodeId
 
               println("Sending to web "+nodeId)
 
               complete(s"Ring started with Node "+ nodeId)
             }
           else{
-            if(listOfNodes.contains(nodeId.toInt))
+            if(listOfNodes.contains(nodeId))
             {
               complete(s"Node "+ nodeId+" already exists in the ring.")
             }
