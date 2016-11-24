@@ -1,16 +1,13 @@
 import java.security.MessageDigest
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-
-import scala.util.Random
-import akka.actor._
+import akka.actor.{Actor, ActorRef, ActorSystem, Props, _}
 import akka.pattern.ask
 import akka.util.Timeout
 
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Random
 
 case class GetNodeHashedActors(nodeIndex : Int)
 
@@ -631,7 +628,13 @@ object chordMainMethod {
 
     val Master = system.actorOf(Props(new ChordMainActor(totalNodes,simulationDuration,simulationMark,system)), name = "MainActor")
     val futureMaster = Master ? "startProcess"
-    println(Await.result(futureMaster, timeout.duration).asInstanceOf[String]+" instantiating cloud")
+    println(Await.result(futureMaster, timeout.duration).asInstanceOf[String]+" instantiating chord simulator")
+
+    val inst: Service = new Service()
+    inst.method(new Array[String](5))
+
+
+
   }
 
   def CreateRingWithNode( nodeIndex : Int): String = {

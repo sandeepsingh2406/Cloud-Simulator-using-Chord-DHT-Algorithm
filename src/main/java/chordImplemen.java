@@ -54,38 +54,7 @@ public class chordImplemen {
             obj=obj.join_ring(num,existing_node_j);
             list_nodes.add(obj);
             int j=0;
-            while(j<3) {
-                for (int i = 0; i < list_nodes.size(); i++) {
-                    obj.stabilize();
-                    list_nodes.get(i).stabilize();
-                    obj.fix_fingers();
-                    list_nodes.get(i).fix_fingers();
-
-                }
-                j++;
-            }
-
-
-
-
-
-
-//            stabilize_fixfingers_checkpredecessor();
-//            stabilize_fixfingers_checkpredecessor();
-//            stabilize_fixfingers_checkpredecessor();
-            System.out.println("Displaying existing nodes with tables. ");
-            display_all_existing_nodes();
-
-
-
-        k++;
-        }
-
-        k=0;
-        while(k<4) {
-            System.out.println("Let's do lookup ");
             System.out.println("Enter item id to find node which should contain this item ");
-            Scanner in = new Scanner(System.in);
             int id = in.nextInt();
 
             int successor=list_nodes.get(0).Locate_Successor(id);

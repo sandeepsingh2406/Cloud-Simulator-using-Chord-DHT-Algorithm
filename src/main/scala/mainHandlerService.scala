@@ -81,8 +81,8 @@ class Service(){
 
               println("listOfNodes.size==0")
               //create ring called
-              val abc=chordMainMethod.putActor(nodeId.toInt)
-              println("Back from ring :"+abc)
+              val abc=chordMainMethod.CreateRingWithNode(nodeId.toInt)
+              println("Back from ring :"+abc+", Node: "+nodeId)
               listOfNodes += nodeId.toInt
 
               println("Sending to web "+nodeId)
@@ -98,6 +98,11 @@ class Service(){
               {
 
                 //joinring called
+                val abc=chordMainMethod.InsertNodeInRing(nodeId.toInt)
+                println("Back from ring :"+abc+", Node: "+nodeId)
+                listOfNodes += nodeId.toInt
+
+                println("Sending to web "+nodeId)
 
                 listOfNodes += nodeId.toInt
                 complete(s"Added Node "+ nodeId+" to the ring.")
