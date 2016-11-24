@@ -11,9 +11,9 @@ import scala.util.Random
 
 case class GetNodeHashedActors(nodeIndex : Int)
 
-case class GetListOfItems(nodeIndex : Int)
+case class GetItemDetail(itemString : String,nodeIndex : Int)
 
-case class PutItem()
+case class PutItemDetail(itemName : String ,itemDetail : String,nodeIndex : Int)
 
 case class GetHashedValue(nodeIndex : Int)
 
@@ -26,10 +26,6 @@ case class JoinNode(newNode: Int, existingNode: Int)
 case class ActivateNodeInRing(nodeIndex:Int)
 
 case class ActivateOtherNode(existingNode : Int)
-
-case object NodeLeave
-
-case object FindNodeSuccessor
 
 case class StabilizeRing(nodeIndex : Int)
 
@@ -181,7 +177,7 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
     /* udpate the array to store the hashed value for a random generated string for only the active nodes */
     while (count < TotalNodes) {
 
-      /* used a  randome string for now- generally this will be the computers IP address */
+      /* used a  random string for now- generally this will be the computers IP address */
       nodeString = Random.alphanumeric.take(25).mkString
 
       hashValue = chordMainMethod.getHash(nodeString,m)
@@ -222,7 +218,9 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
   var successor : Int = -1
   var next_finger: Int = 1
   var isActiveNode : Int = -1
-  var listOfItems : ListBuffer[String] = new ListBuffer[String]
+
+  var listOfItems = scala.collection.mutable.HashMap[String, String]()
+  //var listOfItems : ListBuffer[String] = new ListBuffer[String]
 
   def receive = {
     case "intiateEachNode" => {
@@ -274,6 +272,30 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       orignalSender ! "Create Ring done with node: "+nodeIndex
     }
 
+    case GetItemDetail(itemString : String,nodeIndex : Int) => {
+      println("Get item string : "+itemString+ " from node: "+ nodeIndex)
+      val orignalSender = sender
+      val itemExists = this.listOfItems.get(itemString)
+      if(itemExists.size == 0) {
+        println("Item not found: "+itemString+" at node: "+nodeIndex)
+        orignalSender ! "not found"
+      }
+      else{
+        println("Item found: "+itemString+" at node: "+nodeIndex+" with value: "+itemExists.toString)
+        orignalSender ! itemExists.toString
+      }
+    }
+
+    case PutItemDetail(itemName : String ,itemDetail : String,nodeIndex : Int) =>{
+      println("Put item name : "+itemName+ " with details: "+itemDetail+" at node: "+ nodeIndex)
+      val orignalSender = sender
+
+      val tempItemDetail = itemName + " , " + itemDetail
+      this.listOfItems += (itemName -> tempItemDetail)
+      println("New items at node: "+nodeIndex+" are: "+this.listOfItems.values)
+      orignalSender ! "done"
+    }
+
     case PrintFingerTable(nodeIndex:Int) => {
       val orignalSender = sender
       println("Node: "+nodeIndex+" Successor: "+this.successor+" and Predecesso: "+this.predecessor)
@@ -305,11 +327,6 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       val orignalSender = sender
       println("Get Hashed Value for node: "+nodeIndex+" value: "+this.HashedValue)
       orignalSender ! this.HashedValue
-    }
-
-    case GetListOfItems(nodeIndex : Int) => {
-      val orignalSender = sender
-      sender ! this.listOfItems(nodeIndex)
     }
 
     case NotifyNode(notifyThisNode : Int, currentCallingNode : Int) => {
@@ -605,6 +622,8 @@ object chordMainMethod {
 
   val system = ActorSystem("ChordProtocolHW4")
 
+  var nodeSpace : Int = -1
+
   def getHash(key:String, m : Int): String = {
 
     val sha_instance = MessageDigest.getInstance("SHA-1")
@@ -626,6 +645,7 @@ object chordMainMethod {
     println("Enter system simuation mark: ")
     simulationMark = scala.io.StdIn.readInt()
 
+    nodeSpace = ((Math.log10(totalNodes.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
     val Master = system.actorOf(Props(new ChordMainActor(totalNodes,simulationDuration,simulationMark,system)), name = "MainActor")
     val futureMaster = Master ? "startProcess"
     println(Await.result(futureMaster, timeout.duration).asInstanceOf[String]+" instantiating chord simulator")
@@ -660,4 +680,51 @@ object chordMainMethod {
 
     return "done"
   }
+
+  def LookupItem(itemString : String) : String = {
+
+    val random = new Random
+    val newRandom = chordMainMethod.ActorJoined(random.nextInt(chordMainMethod.ActorJoined.length))
+
+    println("Lookup item: "+itemString+ " first random node: "+newRandom)
+
+    val itemString_hash = getHash(itemString.toLowerCase(),nodeSpace)
+    println("item hash : "+itemString_hash)
+
+    val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+newRandom.toString)
+    //println(actorRef.pathString)
+
+    val future = actorRef ? FindSuccessor(itemString_hash,newRandom,"user")
+
+    val succRes = Await.result(future, timeout.duration).asInstanceOf[Int]
+
+   // LookupListItem(succRes,itemString.toLowerCase())
+    println("Look up item : response from find_successor : "+succRes)
+
+    return succRes.toString
+  }
+
+  def LookupListItem(nodeIndex:Int, itemString : String) : String = {
+    println("Lookup each item: "+itemString+" at node: "+nodeIndex)
+
+    val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
+    //println(actorRef.pathString)
+    val future = actorRef ? GetItemDetail(itemString.toLowerCase(),nodeIndex)
+
+    val itemReceived = Await.result(future, timeout.duration).asInstanceOf[String]
+
+    return itemReceived
+  }
+
+  def InsertItem(nodeIndex: Int, itemName : String ,itemDetail : String) : String ={
+
+    println("insert item: "+itemName+" at node: "+nodeIndex)
+    val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
+    //println(actorRef.pathString)
+    val future = actorRef ? PutItemDetail(itemName,itemDetail,nodeIndex)
+
+    return "done"
+
+  }
+
 }
