@@ -723,6 +723,8 @@ object chordMainMethod {
     //println(actorRef.pathString)
     val future = actorRef ? PutItemDetail(itemName,itemDetail,nodeIndex)
 
+    val itemInserted = Await.result(future, timeout.duration).asInstanceOf[String]
+
     return "done"
 
   }
