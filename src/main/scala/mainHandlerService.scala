@@ -58,13 +58,12 @@ class Service(){
 
 
           val node_id=chordMainMethod.LookupItem(moviename.trim).toInt
-          val response=chordMainMethod.LookListItem(node_id,moviename.trim);
+          val response=chordMainMethod.LookupListItem(node_id,moviename.trim);
 
           if(response.equals("not found"))
             complete(s"Movie not found")
           else
             complete(s"Movie found at Node "+node_id+": "+response)
-          complete(s"getMovie")
         }
     }
 
@@ -77,17 +76,21 @@ class Service(){
           println("putMovie")
 
           val node_id=chordMainMethod.LookupItem(moviename.trim).toInt
-          val response=chordMainMethod.LookListItem(node_id,moviename.trim);
+          println("Movie should be at "+node_id)
+          val response=chordMainMethod.LookupListItem(node_id,moviename.trim);
+          println("LookupListItem response "+response)
+
 
           if(response.equals("not found")) {
+
+            println("Inserting ")
             chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
             complete(s"Movie <"+moviename+"> inserted at Node "+node_id)
           }
           else
-            complete(s"Movie laready exists")
+            complete(s"Movie already exists")
 
 
-          complete(s"putMovie")
         }
     }
 
@@ -111,9 +114,9 @@ class Service(){
               complete(s"Ring started with Node "+ nodeId)
             }
           else{
-            if(listOfNodes.contains(nodeId))
+            if(listOfNodes.contains(nodeId.toInt))
             {
-              complete(s"Node "+ nodeId+"already exists in the ring.")
+              complete(s"Node "+ nodeId+" already exists in the ring.")
             }
             else
               {
