@@ -1,2 +1,10 @@
-Stabilization after addition, deletion
-snapshot after certain time
+Stabilization with context scheduler
+User simulation
+Actor Logging
+Snapshot
+Node Deletion/Leave
+Key deletion
+Key Transfer (node join/leave)
+More than 8 nodes check
+Unit and Integration Test
+Read Me
