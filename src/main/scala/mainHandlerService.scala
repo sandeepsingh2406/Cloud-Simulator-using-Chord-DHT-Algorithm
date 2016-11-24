@@ -55,6 +55,15 @@ class Service(){
         parameters('getMovie) { (moviename) =>
           //output goes here
           println("getMovie")
+
+
+          val node_id=chordMainMethod.LookupItem(moviename.trim).toInt
+          val response=chordMainMethod.LookListItem(node_id,moviename.trim);
+
+          if(response.equals("not found"))
+            complete(s"Movie not found")
+          else
+            complete(s"Movie found at Node "+node_id+": "+response)
           complete(s"getMovie")
         }
     }
@@ -63,9 +72,21 @@ class Service(){
 
     object Route3 {
       val route =
-        parameters('putMovie) { (moviename) =>
+        parameters('putMovie, 'MovieDetails) { (moviename, moviedetails) =>
           //output goes here
           println("putMovie")
+
+          val node_id=chordMainMethod.LookupItem(moviename.trim).toInt
+          val response=chordMainMethod.LookListItem(node_id,moviename.trim);
+
+          if(response.equals("not found")) {
+            chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
+            complete(s"Movie <"+moviename+"> inserted at Node "+node_id)
+          }
+          else
+            complete(s"Movie laready exists")
+
+
           complete(s"putMovie")
         }
     }
