@@ -1,4 +1,5 @@
 import java.net.InetAddress
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
 import akka.actor._
 import akka.http.scaladsl.Http
@@ -29,6 +30,10 @@ object mainHandlerService {
 }
 
 class Service(){
+
+
+  var listOfNodes=new ListBuffer[Integer]()
+//  val MasterActor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
   def method(args: Array[String]): Unit = {
 
     implicit val system = ActorSystem("my-system")
@@ -49,7 +54,8 @@ class Service(){
       val route =
         parameters('getMovie) { (moviename) =>
           //output goes here
-          complete(s"")
+          println("getMovie")
+          complete(s"getMovie")
         }
     }
 
@@ -59,15 +65,48 @@ class Service(){
       val route =
         parameters('putMovie) { (moviename) =>
           //output goes here
-          complete(s"")
+          println("putMovie")
+          complete(s"putMovie")
         }
     }
 
     object Route4 {
       val route =
         parameters('insertNode) { (nodeId) =>
-          //output goes here
-          complete(s"")
+
+          println("insertNode, list size:"+listOfNodes.size)
+
+          if(listOfNodes.size==0)
+            {
+
+              println("listOfNodes.size==0")
+              //create ring called
+              val abc=chordMainMethod.putActor(nodeId.toInt)
+              println("Back from ring :"+abc)
+              listOfNodes += nodeId.toInt
+
+              println("Sending to web "+nodeId)
+
+              complete(s"Ring started with Node "+ nodeId)
+            }
+          else{
+            if(listOfNodes.contains(nodeId))
+            {
+              complete(s"Node "+ nodeId+"already exists in the ring.")
+            }
+            else
+              {
+
+                //joinring called
+
+                listOfNodes += nodeId.toInt
+                complete(s"Added Node "+ nodeId+" to the ring.")
+
+
+              }
+
+          }
+
         }
     }
 
