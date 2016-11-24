@@ -568,22 +568,22 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
           || (currActorNodeIndex_hash < fingerNodeVale && fingerTableValue_hash > currActorNodeIndex_hash && fingerTableValue_hash < fingerNodeVale)
           || (currActorNodeIndex_hash == fingerNodeVale && currActorNodeIndex_hash != fingerTableValue_hash)) {
 
-          val tempIndex = fingerTable(count - 1)(1)
-          if(tempIndex != currActorNodeIndex)
-          {
-            val node = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempIndex.toString)
-
-            val futureHash = node ? GetHashedValue(tempIndex)
-            fingerTableValue_hash = Await.result(futureHash, timeout.duration).asInstanceOf[String]
-          }
-          else{
-            fingerTableValue_hash = this.HashedValue
-          }
-
           return fingerTable(count - 1)(1);
         }
 
         count = count - 1
+        val tempIndex = fingerTable(count - 1)(1)
+        if(tempIndex != currActorNodeIndex)
+        {
+          val node = context.actorSelection("akka://ChordProtocolHW4/user/node_" + tempIndex.toString)
+
+          val futureHash = node ? GetHashedValue(tempIndex)
+          fingerTableValue_hash = Await.result(futureHash, timeout.duration).asInstanceOf[String]
+        }
+        else{
+          fingerTableValue_hash = this.HashedValue
+        }
+
       }
     }
     println("else returning current node actor index : "+currActorNodeIndex)
