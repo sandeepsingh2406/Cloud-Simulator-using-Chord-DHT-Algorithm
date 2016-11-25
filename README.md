@@ -237,16 +237,31 @@ Run->Edit Configurations->Use classpath of module and specify the module there. 
 -------------------------------------------------------------------------------------------------------
 **Bonus Implementations**
 
-<To receive this additional bonus, you need to implement and to describe how you will have implemented these additional features,
- where in the code they are located, and how to run tests to verify these functionalities.>
+Node joining: This allows a user to add a node in the ring. If there is no node in the ring, then the implementation calls ** CreateRingWithNode ** where the user can specify which node they want to add first in the ring. If the ring has atleast one active node, then the ** InsertNodeInRing** is called which adds the node to the ring on the basis of any active node in the ring. The implementation for these functions is present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
 
-Node joining: 
+The unit test for ** CreateRingWithNode ** is : ** testCreateRingWithNode ** and for ** InsertNodeInRing ** is: ** testInsertNodeInRing **. Both the test cases are present in ** chordMainMethodTest.scala **. To run the test case, run testCreateRingWithNode and then testInsertNodeInRing. The paremeter passed for creating the ring or inserting the node in ring i.e. the node number can be changed to any number between 0 - 7. 
 
-Node leaving
+Node leaving : This allows user to specify any node that they want to deactivate from the ring.  The method : ** DeleteNodeInRing ** is called to deactivate
+a node from the ring. This function is presnt in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
 
-Transfer of keys
+The unit test case for node leaving is : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala **. To run the test case, please run  testCreateRingWithNode and then testDeleteNodeInRing. 
 
-Snapshot at certain interval provided by user
+Transfer of keys : This implementation allows to transfer the keys from one node to other node either when a node is leaving or if a new node is joining then
+the neighboring nodes can transfer existing keys from their dataset to the newly joined node. This implementation is present in function : ** transferKeys **
+in ** ChordAlgorithm.scala ** => ** CloudNodeActor **. This function call happens when a node is leaving, then it will transfer all its keys to its successor.
+
+The unit test case : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala ** performs this as an internal operation.
+
+When a new node joins : ** addKeys_whennodejoin ** - this operation is performed internally and if the keys needs to updated from one nodes dataset to other
+they will be transferred. The unit test case : ** testInsertNodeInRing ** in ** chordMainMethodTest.scala ** performs this operation internally.
+
+Delete Key : This implementation allows to delete an item (if existing) from a nodes dataset. This function is : ** DeleteKey ** present in 
+** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
+
+The unit test case is: ** testDeleteKey ** present in ** chordMainMethodTest.scala **. To run this test case, please run testLookupAndPut and then 
+testDeleteKey.
+
+Snapshot at certain interval provided by user : this function allows us to output the current state of system that is the number of nodes added in the ring, each of the nodes successor, predecessor, their list items and their finger table. This function is ** SnapshotActors ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
 
 Two different logging framework: 
 
@@ -254,7 +269,7 @@ SLF4J has been used by the web service class to log input requests and their res
 
 Dependency can be found in build.sbt and its implementation is in mainHandlerService.scala
 
-<Write about Akka actors>
+ActorLogging was performed to check how much time it required to activate each node in the ring when create ring or insert node in ring are called. Different time logs are taken to check how much time is taken by different node actors to perform different operations.
 
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
 
