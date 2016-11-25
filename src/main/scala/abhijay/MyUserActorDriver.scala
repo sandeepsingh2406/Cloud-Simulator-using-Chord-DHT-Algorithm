@@ -16,7 +16,7 @@ object MyUserActorDriver {
   val logger = Logger("Simulation started");
 
   def main(args: Array[String]): Unit = {
-    println(args.deep.mkString(", "));
+    logger.info(args.deep.mkString(", "));
     if(args.length != 0){
       ParameterConstants.numberOfUsers = args(0).toInt;
       ParameterConstants.minRequests = args(1).toInt;
