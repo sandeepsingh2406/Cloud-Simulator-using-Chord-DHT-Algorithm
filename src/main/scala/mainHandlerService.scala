@@ -38,13 +38,14 @@ class Service() {
 
 
   val logger = Logger("mainHandlerService")
+
   //  val MasterActor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
   def method(args: Array[String]): Unit = {
 
-    val path1="CloudSimulator.log"
+    val path1 = "CloudSimulator.log"
     new File(path1).delete()
-    val file=new File(path1).createNewFile()
-    println("File created"+new File(path1).getAbsolutePath)
+    val file = new File(path1).createNewFile()
+    println("File created" + new File(path1).getAbsolutePath)
 
 
 
@@ -70,118 +71,123 @@ class Service() {
           //output goes here
           println("getMovie")
           var moviename = moviename1.replaceAll("^\"|\"$", "");
-
-
-
-          val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
-          val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
-
-          if (response.equals("not found"))
-            complete(s"Movie not found")
-          else
-            complete(s"Movie found at Node " + node_id + ": " + response)
-        }
-    }
-
-
-
-    object Route3 {
-      val route =
-        parameters('putMovie, 'movieDetails) { (moviename1, moviedetails1) =>
-          //output goes here
-          println("putMovie")
-          var moviename = moviename1.replaceAll("^\"|\"$", "");
-          var moviedetails = moviedetails1.replaceAll("^\"|\"$", "");
-
           if (chordMainMethod.ActorJoined.size != 0) {
+
+
             val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
-            println("Movie should be at " + node_id)
             val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
-            println("LookupListItem response " + response)
 
-
-            if (response.equals("not found")) {
-
-              println("Inserting ")
-              chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
-              complete(s"Movie <" + moviename + "> inserted at Node " + node_id)
-            }
+            if (response.equals("not found"))
+              complete(s"Movie not found")
             else
-              complete(s"Movie already exists")
+              complete(s"Movie found at Node " + node_id + ": " + response)
           }
+
           else {
             println("chordMainMethod.ActorJoined.size==0")
             complete(s"Ring does not contain any node currently")
           }
-
         }
     }
 
-    object Route4 {
-      val route =
-        parameters('insertNode) { (nodeId1) =>
-          var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt;
-          println("insertNode, list size:" + chordMainMethod.ActorJoined.size)
-          logger.info("insertNode, list size:" + chordMainMethod.ActorJoined.size)
 
-          if (chordMainMethod.ActorJoined.size == 0) {
+      object Route3 {
+        val route =
+          parameters('putMovie, 'movieDetails) { (moviename1, moviedetails1) =>
+            //output goes here
+            println("putMovie")
+            var moviename = moviename1.replaceAll("^\"|\"$", "");
+            var moviedetails = moviedetails1.replaceAll("^\"|\"$", "");
 
-            println("chordMainMethod.ActorJoined.size==0")
-            //create ring called
-            val abc = chordMainMethod.CreateRingWithNode(nodeId)
-            println("Back from ring :" + abc + ", Node: " + nodeId)
+            if (chordMainMethod.ActorJoined.size != 0) {
+              val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
+              println("Movie should be at " + node_id)
+              val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
+              println("LookupListItem response " + response)
 
-            println("Sending to web " + nodeId)
 
-            complete(s"Ring started with Node " + nodeId)
-          }
-          else {
-            if (chordMainMethod.ActorJoined.contains(nodeId)) {
-              complete(s"Node " + nodeId + " already exists in the ring.")
+              if (response.equals("not found")) {
+
+                println("Inserting ")
+                chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
+                complete(s"Movie <" + moviename + "> inserted at Node " + node_id)
+              }
+              else
+                complete(s"Movie already exists")
             }
             else {
+              println("chordMainMethod.ActorJoined.size==0")
+              complete(s"Ring does not contain any node currently")
+            }
 
-              //joinring called
-              val abc = chordMainMethod.InsertNodeInRing(nodeId.toInt)
-              println("Back from ring join :" + abc + ", Node: " + nodeId)
+          }
+      }
+
+      object Route4 {
+        val route =
+          parameters('insertNode) { (nodeId1) =>
+            var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt;
+            println("insertNode, list size:" + chordMainMethod.ActorJoined.size)
+            logger.info("insertNode, list size:" + chordMainMethod.ActorJoined.size)
+
+            if (chordMainMethod.ActorJoined.size == 0) {
+
+              println("chordMainMethod.ActorJoined.size==0")
+              //create ring called
+              val abc = chordMainMethod.CreateRingWithNode(nodeId)
+              println("Back from ring :" + abc + ", Node: " + nodeId)
 
               println("Sending to web " + nodeId)
 
-              complete(s"Added Node " + nodeId + " to the ring.")
+              complete(s"Ring started with Node " + nodeId)
+            }
+            else {
+              if (chordMainMethod.ActorJoined.contains(nodeId)) {
+                complete(s"Node " + nodeId + " already exists in the ring.")
+              }
+              else {
 
+                //joinring called
+                val abc = chordMainMethod.InsertNodeInRing(nodeId.toInt)
+                println("Back from ring join :" + abc + ", Node: " + nodeId)
+
+                println("Sending to web " + nodeId)
+
+                complete(s"Added Node " + nodeId + " to the ring.")
+
+
+              }
 
             }
 
           }
-
-        }
-    }
+      }
 
 
-    object Route5 {
-      val route =
-        parameters('nodeLeave) { (nodeId1) =>
-          //output goes here
-          println("nodeLeave")
-          var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt
+      object Route5 {
+        val route =
+          parameters('nodeLeave) { (nodeId1) =>
+            //output goes here
+            println("nodeLeave")
+            var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt
 
-          if (chordMainMethod.ActorJoined.size == 0) {
+            if (chordMainMethod.ActorJoined.size == 0) {
 
-            println("chordMainMethod.ActorJoined.size==0")
-            complete(s"Ring does not contain any node currently")
+              println("chordMainMethod.ActorJoined.size==0")
+              complete(s"Ring does not contain any node currently")
+            }
+            else if (!chordMainMethod.ActorJoined.contains(nodeId)) {
+              complete(s"Ring does not contain node " + nodeId + "\nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+            }
+            else {
+
+              //delete method call and key transfer method call
+              val abc = chordMainMethod.DeleteNodeInRing(nodeId.toInt)
+              println("Back from ring leave:" + abc + ", Node: " + nodeId)
+              complete(s"Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+            }
           }
-          else if (!chordMainMethod.ActorJoined.contains(nodeId)) {
-            complete(s"Ring does not contain node " + nodeId + "\nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
-          }
-          else {
-
-            //delete method call and key transfer method call
-                        val abc=chordMainMethod.DeleteNodeInRing(nodeId.toInt)
-                        println("Back from ring leave:"+abc+", Node: "+nodeId)
-            complete(s"Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
-          }
-        }
-    }
+      }
 
       object Route6 {
         val route =
@@ -224,6 +230,7 @@ class Service() {
         .onComplete(_ => system.terminate()) // and shutdown when done
 
     }
-  }
+
+}
 
 
