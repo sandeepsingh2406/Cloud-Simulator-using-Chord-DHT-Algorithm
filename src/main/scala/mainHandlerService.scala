@@ -65,7 +65,7 @@ class Service() {
               "<a href=\"http://127.0.0.1:8080/?putMovie=moviename&movieDetails=details\">http://127.0.0.1:8080/?putMovie=moviename&movieDetails=details</a><br><br>"+
               "<a href=\"http://127.0.0.1:8080/?deleteMovie=moviename\">http://127.0.0.1:8080/?deleteMovie=moviename</a><br><br>"+
               "<strong>Get the live Snapshot of the simulator: </strong><br><br>"+
-              "<a href=\"http://127.0.0.1:8080/getSnapshot\">http://127.0.0.1:8080/getSnapshot</a><br><br>"))
+              "<a href=\"http://127.0.0.1:8080/getSnapshot\">http://127.0.0.1:8080/getSnapshot</a><br><br>"
             ))
             //Main homepage of the web service
           }
