@@ -1,6 +1,7 @@
 import java.io.File
 import java.security.MessageDigest
 
+import abhijay.MyUserActorDriver
 import akka.actor.{Actor, ActorRef, ActorSystem, Props, _}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -917,8 +918,55 @@ object chordMainMethod {
     new File(path1).delete()
     new File(path1).createNewFile()
 
-    val inst: Service = new Service()
-    inst.method(new Array[String](5))
+    val thread = new Thread(new Runnable {
+      def run() {
+        val inst: Service = new Service()
+        inst.method(new Array[String](5))
+      }
+    })
+    thread.start()
+    println(s"Waiting 10 seconds for web service to start in another thread. Some output from other class might be visible here.")
+    Thread.sleep(10000)
+    //rest calls to insert few nodes randomly
+    val random = new Random
+    for(i<-0 to nodeSpace)
+      {
+
+        val newRandom = random.nextInt(totalNodes)
+        var url = "http://127.0.0.1:8080/?insertNode="+newRandom
+        scala.io.Source.fromURL(url).mkString
+      }
+
+    Thread.sleep(5000)
+    val thread1 = new Thread(new Runnable {
+      def run() {
+        MyUserActorDriver.main(Array[String](noOfUsers.toString,minReq.toString,maxReq.toString,readWrite))
+      }
+    })
+    thread1.start()
+    Thread.sleep(5000)
+
+    println("///////////////////////////////Everything started")
+    var start = System.currentTimeMillis();
+    println("start @ "+start)
+
+    var end = start + (120*1000) //(simulationDuration*1000) // 60 seconds * 1000 ms/sec
+    println("end @ "+end)
+
+    while (System.currentTimeMillis() < end)
+    {
+
+    }
+    println("Stopping Everything")
+    thread.interrupt()
+    thread1.interrupt()
+    system.stop(Master)
+    System.exit(0)
+
+
+
+
+
 
   }
 
