@@ -64,7 +64,7 @@ class UserActor(userId: Int) extends Actor {
       val numberOfMovies = listOfMovies.length;
       for(i <- min until max+1){
         val id = random.nextInt(numberOfMovies);
-        self ! getMovie(listOfMovies(id).split("\\:")(0));
+        self ! getMovie(listOfMovies(id).split("\\@")(0));
         Thread.sleep(((60/max).ceil.toLong)*1000);
       }
     }
@@ -77,7 +77,7 @@ class UserActor(userId: Int) extends Actor {
       val numberOfMovies = listOfMovies.length;
       for(i <- min until max+1){
         val id = random.nextInt(numberOfMovies);
-        val movieTokens = listOfMovies(id).split("\\:");
+        val movieTokens = listOfMovies(id).split("\\@");
         logger.info("Adding movie: " + movieTokens(0));
         putMovieMethod(movieTokens(0), movieTokens(1));
         Thread.sleep(((60/max).ceil.toLong)*1000);

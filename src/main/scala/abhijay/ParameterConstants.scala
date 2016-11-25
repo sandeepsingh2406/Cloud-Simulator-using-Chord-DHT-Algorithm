@@ -10,7 +10,7 @@ object ParameterConstants {
   val userActorName = "UserActorSystem";
   val userActorNamePrefix = "akka://" + userActorName + "/user/";
   var numberOfUsers: Int = 10;
-  var movieDatabaseFile = "newMovies.txt";
+  var movieDatabaseFile = "movies.txt";
   // simulation duration
   val duration = 15;
 
