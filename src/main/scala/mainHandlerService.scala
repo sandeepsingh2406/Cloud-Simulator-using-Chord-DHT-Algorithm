@@ -63,7 +63,10 @@ class Service() {
               "<a href=\"http://127.0.0.1:8080/?nodeLeave=0\">http://127.0.0.1:8080/?nodeLeave=0</a><br><br>"+
               "<a href=\"http://127.0.0.1:8080/?getMovie=moviename\">http://127.0.0.1:8080/?getMovie=moviename</a><br><br>"+
               "<a href=\"http://127.0.0.1:8080/?putMovie=moviename&movieDetails=details\">http://127.0.0.1:8080/?putMovie=moviename&movieDetails=details</a><br><br>"+
-              "<a href=\"http://127.0.0.1:8080/?deleteMovie=moviename\">http://127.0.0.1:8080/?deleteMovie=moviename</a><br><br>"))
+              "<a href=\"http://127.0.0.1:8080/?deleteMovie=moviename\">http://127.0.0.1:8080/?deleteMovie=moviename</a><br><br>"+
+              "<strong>Get the live Snapshot of the simulator: </strong><br><br>"+
+              "<a href=\"http://127.0.0.1:8080/getSnapshot\">http://127.0.0.1:8080/getSnapshot</a><br><br>"))
+            ))
             //Main homepage of the web service
           }
         }
@@ -308,7 +311,10 @@ class Service() {
         //request to get snapshot of all node actors
         println("getting snapshot of entire system")
         pw.println("---------------------------------------------------------------------------")
-        pw.println("Snapshot: Timestamp: "+Calendar.getInstance().getTime())
+        val time=Calendar.getInstance().getTime()
+        pw.println("Snapshot: Timestamp: "+time)
+        var output="\n\nSnapshot: Timestamp: "+time+"\n"
+
 
 
 
@@ -316,20 +322,23 @@ class Service() {
         if(chordMainMethod.ActorJoined.size == 0)
           {
             pw.println("No nodes in the cloud ring.")
+            output+=("\n\nNo nodes in the cloud ring.")
           }
         else{
           //Get details of all nodes in ring
 
           for(counter <- 0 until chordMainMethod.ActorJoined.length)
             {
-              pw.write(chordMainMethod.SnapshotActors(chordMainMethod.ActorJoined(counter)))
+              val str=chordMainMethod.SnapshotActors(chordMainMethod.ActorJoined(counter))
+              output+=str
+              pw.write(str)
             }
         }
 
 
           pw.close()
         logger.info("Snapshot completed. File: ChordSnapshot.txt")
-        complete("done")
+        complete(output)
         }
 
     }
