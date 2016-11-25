@@ -24,7 +24,7 @@ object MyUserActorDriver {
 //    user ! getMovie ("test");
 
     instantiateActors(ParameterConstants.numberOfUsers, actorSystem);
-    val listOfMovies = readFile(ParameterConstants.movieDatabaseFile);
+//    val listOfMovies = readFile(ParameterConstants.movieDatabaseFile);
     startSimulation(ParameterConstants.duration, ParameterConstants.numberOfUsers);
 
   }
@@ -35,9 +35,10 @@ object MyUserActorDriver {
     for(i <- 0 until numberOfUsers){
       val id = random.nextInt(numberOfUsers);
       val userNode = actorSystem.actorSelection(ParameterConstants.userActorNamePrefix + ParameterConstants.userNamePrefix + id);
-      println("startSimulation: " + userNode.anchorPath);
+      logger.info("startSimulation() " + userNode.pathString);
       userNode ! writeRequest(0, 15);
       userNode ! readRequest(0, 10);
+      userNode ! deleteRequest(0, 5);
       Thread.sleep(1000);
     }
   }
