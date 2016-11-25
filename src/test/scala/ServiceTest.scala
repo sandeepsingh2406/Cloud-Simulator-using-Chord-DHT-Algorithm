@@ -38,4 +38,6 @@ class ServiceTest extends FunSuite {
     assert(matched_result.equals("<h1>Welcome to the Cloud Simulator</h1>"))
 
   }
+
+
 }
