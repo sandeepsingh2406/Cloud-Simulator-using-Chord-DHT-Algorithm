@@ -130,6 +130,11 @@ class Service() {
             println("insertNode, list size:" + chordMainMethod.ActorJoined.size)
             logger.info("insertNode, list size:" + chordMainMethod.ActorJoined.size)
 
+            if(nodeId>=chordMainMethod.totalNodes)
+              {
+                complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes)
+              }
+
             if (chordMainMethod.ActorJoined.size == 0) {
 
               println("chordMainMethod.ActorJoined.size==0")
