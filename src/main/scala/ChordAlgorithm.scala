@@ -834,10 +834,6 @@ object chordMainMethod {
 
   var totalNodes : Int = 0
 
-  var simulationDuration : Int = 0
-
-  var simulationMark : Int = 0
-
   val system = ActorSystem("ChordProtocolHW4")
 
   var nodeSpace : Int = -1
@@ -856,14 +852,30 @@ object chordMainMethod {
 
   def main(args: Array[String])
   {
+
+    println("Enter users: ")
+    val noOfUsers = args(0).toInt
+
     println("Enter total nodes in system: ")
-    totalNodes = scala.io.StdIn.readInt()
+    totalNodes = args(1).toInt //scala.io.StdIn.readInt()
 
-    println("Enter system simuation duration: ")
-    simulationDuration = scala.io.StdIn.readInt()
+    println("Min request/ min: ")
+    val minReq = args(2).toInt
 
-    println("Enter system simuation mark: ")
-    simulationMark = scala.io.StdIn.readInt()
+    println("Max request/ min: ")
+    val maxReq = args(3).toInt
+
+    println("Duration of simulation in minutes: ")
+    val simulationDuration = args(4).toInt //scala.io.StdIn.readInt()
+
+    println("Time mark in minutes:")
+    val simulationMark = args(5).toInt
+
+    println("Request Items: File Path ")
+    val filePath = args(6).toString
+
+    println("Ratio of Read/Write request: ")
+    val readWrite = args(7).toString
 
     nodeSpace = ((Math.log10(totalNodes.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
     val Master = system.actorOf(Props(new ChordMainActor(totalNodes,simulationDuration,simulationMark,system)), name = "MainActor")
