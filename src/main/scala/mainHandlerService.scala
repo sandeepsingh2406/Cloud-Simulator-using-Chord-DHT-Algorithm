@@ -312,11 +312,14 @@ class Service() {
 
 
 
+      //If no nodes in ring
         if(chordMainMethod.ActorJoined.size == 0)
           {
             pw.println("No nodes in the cloud ring.")
           }
         else{
+          //Get details of all nodes in ring
+
           for(counter <- 0 until chordMainMethod.ActorJoined.length)
             {
               pw.write(chordMainMethod.SnapshotActors(chordMainMethod.ActorJoined(counter)))
