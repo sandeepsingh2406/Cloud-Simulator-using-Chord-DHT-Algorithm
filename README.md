@@ -147,10 +147,31 @@ Addtionally, the web service also take a request to get a snapshot(localhost:808
 			
 **Scala test classes** (/src/test/scala/):
 
+**chordMainMethodTest**
+
+This file contains the unit test cases for testing the chord algorithm different functions:
+
+	1. testCreateRingWithNode : this unit test case is responsible to test the creation of the ring with one node.
+	
+	2. testInsertNodeInRing : this unit test case is responsible to test inserting a new node into an existing active ring containing one node. This test
+	is dependent on "testCreateRingWithNode".
+	
+	3. testDeleteNodeInRing : this unit test case is responsible to test the leaving of an existing node from the ring. 
+	This test is dependent on "testCreateRingWithNode".
+	
+	4. testLookupAndPut : this unit test case is responsible to test the lookup for an item (movie) in the dataset of nodes active in the ring.
+	If the item is not found, then the item is added to the dataset of the node as returned from the lookup. This tests both lookup and insertion of 
+	an item.
+	
+	5. testDeleteKey : this unit test case is responsible to test the deletion of an existing item(movie) from the dataset of a node. This test case
+	depends on "testLookupAndPut" and deletes the item(movie) from the nodes dataset.
+	
+
 **chordIntegrationTest.scala**
 (Integration Testing for the entire system)
 
-<Description goes here>
+This integration test is to perform integration test of chord algorithm and the web service. The integration test instantiates the main actor and then 
+calls the web service to create ring with a single node and insert an item into the active node in the ring.
 	
 **serviceTest.scala**: This testcase initiates the web service and makes rest calls to the web service and check its response. 
 
