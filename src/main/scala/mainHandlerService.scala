@@ -56,7 +56,7 @@ class Service() {
       val route =
         path("") {
           akka.http.scaladsl.server.Directives.get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Welcome to the Web Service</h1>"))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Welcome to the Cloud Simulator</h1>"))
           }
         }
     }
