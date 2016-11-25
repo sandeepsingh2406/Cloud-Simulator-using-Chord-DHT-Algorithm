@@ -24,43 +24,56 @@ object MyUserActorDriver {
       ParameterConstants.ratio = args(3);
     }
 
-
-    val user = actorSystem.actorOf(Props(new UserActor(0)), name = ParameterConstants.userNamePrefix+0);
-    println(user.path);
-//    user ! putMovieFileAndCloud("new", "testdetails", ParameterConstants.movieDatabaseFile);
-//    user ! getMovie ("test");
+/*
+      block to get max read and write requests from ratio, min and max requests
+      e.g. ration = 4:1, minRequests = 0, maxRequests = 13
+      divider = 13/(4+1) = 13/5 = 2
+*/
+      val tokens = ParameterConstants.ratio.split("\\:");
+      val readRequest = tokens(0).toInt;
+      val writeReqeusts = tokens(1).toInt;
+      val totalRequests = readRequest + writeReqeusts;
+      val divider = (ParameterConstants.maxRequests / totalRequests).toInt;
+      val maxReadRequests = divider * readRequest;
+      val maxWriteRequests = divider * writeReqeusts;
 
     instantiateActors(ParameterConstants.numberOfUsers, actorSystem);
 //    val listOfMovies = readFile(ParameterConstants.movieDatabaseFile);
-    startSimulation(ParameterConstants.duration, ParameterConstants.numberOfUsers);
+    startSimulation(ParameterConstants.duration, ParameterConstants.numberOfUsers, maxReadRequests, maxWriteRequests, divider);
 
   }
 
-  def startSimulation(duration: Int, numberOfUsers: Int): Unit ={
+  def startSimulation(duration: Int, numberOfUsers: Int,
+                      maxReadRequests: Int,
+                      maxWriteRequests: Int,
+                      maxDeleteRequests: Int): Unit ={
     val simulationDuration = duration.seconds.fromNow;
     val random = Random;
     for(i <- 0 until numberOfUsers){
       val id = random.nextInt(numberOfUsers);
       val userNode = actorSystem.actorSelection(ParameterConstants.userActorNamePrefix + ParameterConstants.userNamePrefix + id);
       logger.info("startSimulation() " + userNode.pathString);
-      userNode ! writeRequest(0, 15);
-      userNode ! readRequest(0, 10);
-      userNode ! deleteRequest(0, 5);
+      userNode ! writeRequest(0, maxWriteRequests);
+      userNode ! readRequest(0, maxReadRequests);
+      userNode ! deleteRequest(0, maxDeleteRequests);
       Thread.sleep(1000);
     }
   }
 
+  // add all read movies in cloud simulator
   def addAllMovies(fileName: String): Unit ={
 
   }
 
+  // read input file and return list of lines
   def readFile(fileName: String) : List[String] = {
     val listOfLines = Source.fromFile(fileName).getLines.toList
     return listOfLines;
   }
 
+  // instantial all user actors
   def instantiateActors(numberOfActors: Int, actorSystem: ActorSystem): Unit = {
-    for(i <- 1 until numberOfActors){
+    for(i <- 0 until numberOfActors){
       var user = actorSystem.actorOf(Props(new UserActor(i)), name = ParameterConstants.userNamePrefix+i);
     }
   }
