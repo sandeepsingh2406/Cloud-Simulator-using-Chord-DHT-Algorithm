@@ -1,2 +1,2 @@
-For chordMainMethod: 5 10 0 20 5 1 movies.txt 4:1
+For chordMainMethod: 5 8 0 20 10 2 movies.txt 4:1
 for MyUserActorDriver: 5 0 20 4:1
