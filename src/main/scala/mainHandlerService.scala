@@ -37,15 +37,11 @@ object mainHandlerService {
 class Service() {
 
 
-  val logger = Logger("mainHandlerService")
+  val logger = Logger("mainHandlerService Class")
 
   //  val MasterActor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
   def method(args: Array[String]): Unit = {
 
-    val path1 = "CloudSimulator.log"
-    new File(path1).delete()
-    val file = new File(path1).createNewFile()
-    println("File created" + new File(path1).getAbsolutePath)
 
 
 
@@ -70,20 +66,38 @@ class Service() {
         parameters('getMovie) { (moviename1) =>
           //output goes here
           println("getMovie")
+
           var moviename = moviename1.replaceAll("^\"|\"$", "");
+
+          logger.info("Received Request to find movie \""+moviename+"\"")
+
           if (chordMainMethod.ActorJoined.size != 0) {
 
 
+            logger.info("Looking up node which should contain this movie \""+moviename+"\" as per it's HASH")
+
             val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
+
+            logger.info("Response: Node which should contain the movie is \""+node_id+"\"")
+            logger.info("Checking if node \""+node_id+"\""+" contains the movie item.")
+
+
             val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
 
-            if (response.equals("not found"))
+
+
+            if (response.equals("not found")) {
+              logger.error("Response: Error! Not found at Node \""+node_id+"\"")
               complete(s"Movie not found")
-            else
+
+            }
+            else {
+              logger.info("Response: Movie found at Node \""+node_id+"\". Movie name, details: "+response)
               complete(s"Movie found at Node " + node_id + ": " + response)
-          }
+            }}
 
           else {
+            logger.error("Response: Error! Ring does not contain any node currently")
             println("chordMainMethod.ActorJoined.size==0")
             complete(s"Ring does not contain any node currently")
           }
@@ -99,23 +113,36 @@ class Service() {
             var moviename = moviename1.replaceAll("^\"|\"$", "");
             var moviedetails = moviedetails1.replaceAll("^\"|\"$", "");
 
+            logger.info("Received Request to put movie \""+moviename+"\"")
+
+            logger.info("Looking up which node should contain this movie \""+moviename+"\" as per it's HASH")
+
             if (chordMainMethod.ActorJoined.size != 0) {
               val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
-              println("Movie should be at " + node_id)
+
+              logger.info("Response: Node which should contain the movie is \""+node_id+"\"")
+
+              println(" Movie should be at " + node_id)
               val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
               println("LookupListItem response " + response)
 
+              logger.info("Storing movie at node \""+node_id+"\"")
 
               if (response.equals("not found")) {
 
                 println("Inserting ")
                 chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
+                logger.info("Response: Movie "+moviename1+" stored at node \""+node_id+"\"")
                 complete(s"Movie <" + moviename + "> inserted at Node " + node_id)
               }
-              else
+              else {
+                logger.error("Response: Error! Movie "+moviename1+" already exists at node \""+node_id+"\"")
+
                 complete(s"Movie already exists")
+              }
             }
             else {
+              logger.info("Response: Ring does not contain any node currently. Cannot store movie item.")
               println("chordMainMethod.ActorJoined.size==0")
               complete(s"Ring does not contain any node currently")
             }
@@ -128,10 +155,11 @@ class Service() {
           parameters('insertNode) { (nodeId1) =>
             var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt;
             println("insertNode, list size:" + chordMainMethod.ActorJoined.size)
-            logger.info("insertNode, list size:" + chordMainMethod.ActorJoined.size)
+            logger.info("Request Received: Insert Node " + nodeId)
 
             if(nodeId>=chordMainMethod.totalNodes)
               {
+                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+chordMainMethod.totalNodes)
                 complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes)
               }
 
@@ -144,10 +172,14 @@ class Service() {
 
               println("Sending to web " + nodeId)
 
+              logger.info("Response: Ring created with first node: " + nodeId+". Current Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+
               complete(s"Ring started with Node " + nodeId)
             }
             else {
               if (chordMainMethod.ActorJoined.contains(nodeId)) {
+                logger.info("Response: Node "+nodeId+" already exists in the ring")
+
                 complete(s"Node " + nodeId + " already exists in the ring.")
               }
               else {
@@ -158,6 +190,7 @@ class Service() {
 
                 println("Sending to web " + nodeId)
 
+                logger.info("Added Node " + nodeId + " to the ring. Current Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
                 complete(s"Added Node " + nodeId + " to the ring.")
 
 
@@ -176,12 +209,18 @@ class Service() {
             println("nodeLeave")
             var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt
 
+            logger.info("Request Received: Remove Node " + nodeId)
+            logger.info("Attempting to removing Node " + nodeId)
+
             if (chordMainMethod.ActorJoined.size == 0) {
 
               println("chordMainMethod.ActorJoined.size==0")
+              logger.error("Response: Error! Ring does not contain any node currently")
               complete(s"Ring does not contain any node currently")
             }
             else if (!chordMainMethod.ActorJoined.contains(nodeId)) {
+              logger.error("Response: Error! Ring does not contain node"+ nodeId + "\nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+
               complete(s"Ring does not contain node " + nodeId + "\nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
             }
             else {
@@ -189,6 +228,8 @@ class Service() {
               //delete method call and key transfer method call
               val abc = chordMainMethod.DeleteNodeInRing(nodeId.toInt)
               println("Back from ring leave:" + abc + ", Node: " + nodeId)
+              logger.info("Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+
               complete(s"Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
             }
           }
@@ -202,16 +243,30 @@ class Service() {
             println("deleteMovie")
             var moviename = moviename1.replaceAll("^\"|\"$", "");
 
+            logger.info("Request Received: Delete Movie item " + moviename1)
+            logger.info("Looking up node which should contain this movie \""+moviename+"\" as per it's HASH")
 
+            if (chordMainMethod.ActorJoined.size == 0) {
+
+              println("chordMainMethod.ActorJoined.size==0")
+              logger.error("Response: Error! Ring does not contain any node currently")
+              complete(s"Not deleted. Ring does not contain any node currently")
+            }
 
             val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
             val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
 
+            logger.info("Response: Node which should contain the movie is \""+node_id+"\"")
+            logger.info("Checking if node \""+node_id+"\""+" contains the movie item.")
+
             if (response.equals("not found"))
-              complete(s"Movie not found")
+              {
+              logger.error("Response: Error! Not found at Node \""+node_id+"\"")
+              complete(s"Movie not found")}
             else {
 
               val response = chordMainMethod.DeleteKey(node_id, moviename.trim);
+              logger.info("Response: Movie found at Node " + node_id + ". Movie deleted: " + moviename)
               complete(s"Movie found at Node " + node_id + ": " + response +
                 "\nMovie deleted: " + moviename + ": " + response)
             }
