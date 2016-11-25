@@ -16,4 +16,5 @@ object ParameterConstants {
   var ratio = "4:1"
   var minRequests = 0;
   var maxRequests = 15;
+  var interval = 2;
 }

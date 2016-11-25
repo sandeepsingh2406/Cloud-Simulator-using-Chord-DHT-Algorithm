@@ -26,6 +26,7 @@ object MyUserActorDriver {
       ParameterConstants.minRequests = args(1).toInt;
       ParameterConstants.maxRequests = args(2).toInt;
       ParameterConstants.ratio = args(3);
+      ParameterConstants.interval = args(4).toInt;
     }
 
 /*
@@ -47,10 +48,10 @@ object MyUserActorDriver {
     logger.info(maxReadRequests)
     logger.info(maxWriteRequests)
 
+    // instantiate all the actors
     instantiateActors(ParameterConstants.numberOfUsers, actorSystem);
-//    val listOfMovies = readFile(ParameterConstants.movieDatabaseFile);
     startSimulation(ParameterConstants.duration, ParameterConstants.numberOfUsers, maxReadRequests, maxWriteRequests, divider);
-
+    takeSnapshots(ParameterConstants.interval);
   }
 
   def startSimulation(duration: Int, numberOfUsers: Int,
