@@ -955,18 +955,13 @@ object chordMainMethod {
 
     while (System.currentTimeMillis() < end)
     {
-
+      //do nothing wait till the simulation duration is reached and then stop the actors and shutdown the system
     }
     println("Stopping Everything")
     thread.interrupt()
     thread1.interrupt()
     system.stop(Master)
     System.exit(0)
-
-
-
-
-
 
   }
 

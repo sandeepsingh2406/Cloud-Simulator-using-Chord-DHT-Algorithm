@@ -16,6 +16,10 @@ class chordMainMethodTest extends FunSuite {
   val futureMaster = Master ? "startProcess"
   println(Await.result(futureMaster,timeout.duration ).asInstanceOf[String]+" instantiating chord simulator")
 
+  chordMainMethod.nodeSpace = ((Math.log10(8.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
+  val insertMovieName = "testmovie"
+  val insertMovieDetails = "testdetails"
+
   /* test the ring creation - enter one node into the ring */
   test("testCreateRingWithNode") {
     val response = chordMainMethod.CreateRingWithNode(0)
@@ -36,21 +40,38 @@ class chordMainMethodTest extends FunSuite {
 
   /* test for inserting a movie */
   test("testLookupAndPut"){
-    chordMainMethod.nodeSpace = ((Math.log10(8.toDouble)) / (Math.log10(2.toDouble))).ceil.toInt
-    val insertMovieName = "testmovie"
+
     val response = chordMainMethod.LookupItem(insertMovieName)
     println("response from look up item: "+response)
     if (!(response.equals("not found")))
     {
       val response1 = chordMainMethod.LookupListItem(response.toInt,insertMovieName)
       if(response1.equals("not found")){
-        val response2 = chordMainMethod.InsertItem(response.toInt,insertMovieName,"test movie details")
+        val response2 = chordMainMethod.InsertItem(response.toInt,insertMovieName,insertMovieDetails)
         assert(response2.equals("done"))
       }
     }
     else{
       println("movie already already exists")
     }
+  }
+
+  /* delete an item - movie name from the system */
+  test("testDeleteKey"){
+    val response = chordMainMethod.LookupItem(insertMovieName.trim)
+    if (!(response.equals("not found")))
+    {
+      val response1 = chordMainMethod.LookupListItem(response.toInt,insertMovieName)
+      if(!(response1.equals("not found")))
+      {
+        val response2 = chordMainMethod.DeleteKey(response.toInt, insertMovieName);
+        assert(response2.equals("done"))
+      }
+    }
+    else{
+      println("movie does not already exists")
+    }
+
   }
 
 }
