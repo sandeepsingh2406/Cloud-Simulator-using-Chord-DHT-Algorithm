@@ -1,0 +1,119 @@
+2016/11/25 04:03:50-859 [INFO] mainHandlerService Class - Starting log
+2016/11/25 04:04:00-978 [INFO] mainHandlerService Class - Request Received: Insert Node 0
+2016/11/25 04:04:00-979 [INFO] mainHandlerService Class - Attempting to insert node in the ring.
+2016/11/25 04:04:01-6 [INFO] mainHandlerService Class - Response: Ring created with first node: 0. Current Nodes: ListBuffer(0)
+2016/11/25 04:04:01-80 [INFO] mainHandlerService Class - Request Received: Insert Node 1
+2016/11/25 04:04:01-80 [INFO] mainHandlerService Class - Attempting to insert node in the ring.
+2016/11/25 04:04:01-138 [INFO] mainHandlerService Class - Added Node 1 to the ring. Current Nodes: ListBuffer(0, 1)
+2016/11/25 04:04:01-141 [INFO] mainHandlerService Class - Request Received: Insert Node 1
+2016/11/25 04:04:01-142 [INFO] mainHandlerService Class - Attempting to insert node in the ring.
+2016/11/25 04:04:01-143 [ERROR] mainHandlerService Class - Response: Error! Node 1 already exists in the ring
+2016/11/25 04:04:01-147 [INFO] mainHandlerService Class - Request Received: Insert Node 7
+2016/11/25 04:04:01-147 [INFO] mainHandlerService Class - Attempting to insert node in the ring.
+2016/11/25 04:04:01-232 [INFO] mainHandlerService Class - Added Node 7 to the ring. Current Nodes: ListBuffer(0, 1, 7)
+2016/11/25 04:04:06-286 [INFO] Simulation started - 5, 0, 20, 4:1
+2016/11/25 04:04:06-293 [INFO] Simulation started - startSimulation() /user/user2
+2016/11/25 04:04:06-337 [INFO] mainHandlerService Class - Received Request to put movie "French Twist"
+2016/11/25 04:04:06-338 [INFO] mainHandlerService Class - Looking up which node should contain this movie "French Twist" as per it's HASH
+2016/11/25 04:04:06-347 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:06-349 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:06-352 [INFO] mainHandlerService Class - Response: Movie French Twist stored at node "0"
+2016/11/25 04:04:07-299 [INFO] Simulation started - startSimulation() /user/user4
+2016/11/25 04:04:07-303 [INFO] mainHandlerService Class - Received Request to put movie "Stargate"
+2016/11/25 04:04:07-304 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Stargate" as per it's HASH
+2016/11/25 04:04:07-307 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:07-308 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:07-308 [INFO] mainHandlerService Class - Response: Movie Stargate stored at node "0"
+2016/11/25 04:04:08-299 [INFO] Simulation started - startSimulation() /user/user1
+2016/11/25 04:04:08-307 [INFO] mainHandlerService Class - Received Request to put movie "GoldenEye"
+2016/11/25 04:04:08-308 [INFO] mainHandlerService Class - Looking up which node should contain this movie "GoldenEye" as per it's HASH
+2016/11/25 04:04:08-319 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:08-320 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:08-321 [INFO] mainHandlerService Class - Response: Movie GoldenEye stored at node "0"
+2016/11/25 04:04:09-299 [INFO] Simulation started - startSimulation() /user/user2
+2016/11/25 04:04:10-299 [INFO] Simulation started - startSimulation() /user/user3
+2016/11/25 04:04:10-302 [INFO] mainHandlerService Class - Received Request to put movie "Three Colors: Red"
+2016/11/25 04:04:10-302 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Three Colors: Red" as per it's HASH
+2016/11/25 04:04:10-306 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:04:10-307 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:04:10-310 [INFO] mainHandlerService Class - Response: Movie Three Colors: Red stored at node "7"
+2016/11/25 04:04:21-371 [INFO] mainHandlerService Class - Received Request to put movie "Braveheart"
+2016/11/25 04:04:21-371 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Braveheart" as per it's HASH
+2016/11/25 04:04:21-373 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:04:21-373 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:04:21-373 [INFO] mainHandlerService Class - Response: Movie Braveheart stored at node "7"
+2016/11/25 04:04:22-320 [INFO] mainHandlerService Class - Received Request to put movie "Ed Wood"
+2016/11/25 04:04:22-320 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Ed Wood" as per it's HASH
+2016/11/25 04:04:22-331 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:04:22-334 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:04:22-334 [INFO] mainHandlerService Class - Response: Movie Ed Wood stored at node "7"
+2016/11/25 04:04:23-329 [INFO] mainHandlerService Class - Received Request to put movie "Crumb"
+2016/11/25 04:04:23-329 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Crumb" as per it's HASH
+2016/11/25 04:04:23-330 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:23-330 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:23-331 [INFO] mainHandlerService Class - Response: Movie Crumb stored at node "0"
+2016/11/25 04:04:25-315 [INFO] mainHandlerService Class - Received Request to put movie "Antonias Line"
+2016/11/25 04:04:25-315 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Antonias Line" as per it's HASH
+2016/11/25 04:04:25-318 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:25-318 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:25-318 [INFO] mainHandlerService Class - Response: Movie Antonias Line stored at node "0"
+2016/11/25 04:04:36-389 [INFO] mainHandlerService Class - Received Request to put movie "Mad Love"
+2016/11/25 04:04:36-389 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Mad Love" as per it's HASH
+2016/11/25 04:04:36-391 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:36-391 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:36-392 [INFO] mainHandlerService Class - Response: Movie Mad Love stored at node "0"
+2016/11/25 04:04:37-341 [INFO] mainHandlerService Class - Received Request to put movie "Hoop Dreams"
+2016/11/25 04:04:37-342 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Hoop Dreams" as per it's HASH
+2016/11/25 04:04:37-345 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:37-347 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:37-348 [INFO] mainHandlerService Class - Response: Movie Hoop Dreams stored at node "0"
+2016/11/25 04:04:38-337 [INFO] mainHandlerService Class - Received Request to put movie "Free Willy 2: The Adventure Home"
+2016/11/25 04:04:38-337 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Free Willy 2: The Adventure Home" as per it's HASH
+2016/11/25 04:04:38-343 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:04:38-344 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:04:38-345 [INFO] mainHandlerService Class - Response: Movie Free Willy 2: The Adventure Home stored at node "7"
+2016/11/25 04:04:40-323 [INFO] mainHandlerService Class - Received Request to put movie "Hoop Dreams"
+2016/11/25 04:04:40-323 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Hoop Dreams" as per it's HASH
+2016/11/25 04:04:40-327 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:40-362 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:40-364 [ERROR] mainHandlerService Class - Response: Error! Movie Hoop Dreams already exists at node "0"
+2016/11/25 04:04:51-761 [INFO] mainHandlerService Class - Received Request to put movie "Richard III"
+2016/11/25 04:04:51-761 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Richard III" as per it's HASH
+2016/11/25 04:04:51-821 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:04:51-829 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:04:51-830 [INFO] mainHandlerService Class - Response: Movie Richard III stored at node "7"
+2016/11/25 04:04:52-397 [INFO] mainHandlerService Class - Received Request to put movie "While You Were Sleeping"
+2016/11/25 04:04:52-397 [INFO] mainHandlerService Class - Looking up which node should contain this movie "While You Were Sleeping" as per it's HASH
+2016/11/25 04:04:52-398 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:52-399 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:52-399 [INFO] mainHandlerService Class - Response: Movie While You Were Sleeping stored at node "0"
+2016/11/25 04:04:53-354 [INFO] mainHandlerService Class - Received Request to put movie "Maverick"
+2016/11/25 04:04:53-354 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Maverick" as per it's HASH
+2016/11/25 04:04:53-384 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:04:53-385 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:04:53-482 [INFO] mainHandlerService Class - Response: Movie Maverick stored at node "7"
+2016/11/25 04:04:55-370 [INFO] mainHandlerService Class - Received Request to put movie "Exotica"
+2016/11/25 04:04:55-370 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Exotica" as per it's HASH
+2016/11/25 04:04:55-372 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:04:55-373 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:04:55-374 [INFO] mainHandlerService Class - Response: Movie Exotica stored at node "0"
+2016/11/25 04:05:06-849 [INFO] mainHandlerService Class - Received Request to put movie "Babe"
+2016/11/25 04:05:06-849 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Babe" as per it's HASH
+2016/11/25 04:05:06-849 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:05:06-850 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:05:06-850 [INFO] mainHandlerService Class - Response: Movie Babe stored at node "7"
+2016/11/25 04:05:07-409 [INFO] mainHandlerService Class - Received Request to put movie "Eat Drink Man Woman"
+2016/11/25 04:05:07-409 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Eat Drink Man Woman" as per it's HASH
+2016/11/25 04:05:07-410 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:05:07-411 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:05:07-411 [INFO] mainHandlerService Class - Response: Movie Eat Drink Man Woman stored at node "0"
+2016/11/25 04:05:08-485 [INFO] mainHandlerService Class - Received Request to put movie "Free Willy 2: The Adventure Home"
+2016/11/25 04:05:08-486 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Free Willy 2: The Adventure Home" as per it's HASH
+2016/11/25 04:05:08-487 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "7"
+2016/11/25 04:05:08-488 [INFO] mainHandlerService Class - Storing movie at node "7"
+2016/11/25 04:05:08-488 [ERROR] mainHandlerService Class - Response: Error! Movie Free Willy 2: The Adventure Home already exists at node "7"
+2016/11/25 04:05:10-378 [INFO] mainHandlerService Class - Received Request to put movie "Birdcage The"
+2016/11/25 04:05:10-378 [INFO] mainHandlerService Class - Looking up which node should contain this movie "Birdcage The" as per it's HASH
+2016/11/25 04:05:10-379 [INFO] mainHandlerService Class - Response: Node which should contain the movie is "0"
+2016/11/25 04:05:10-380 [INFO] mainHandlerService Class - Storing movie at node "0"
+2016/11/25 04:05:10-380 [INFO] mainHandlerService Class - Response: Movie Birdcage The stored at node "0"
