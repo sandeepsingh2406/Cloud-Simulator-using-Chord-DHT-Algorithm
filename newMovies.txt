@@ -1,30 +1,33 @@
-ToyStory	: (1995)|01-Jan-1995
-GoldenEye	: (1995)|01-Jan-1995
-FourRooms	: (1995)|01-Jan-1995
-GetShorty	: (1995)|01-Jan-1995
-Copycat		: (1995)|01-Jan-1995
-ShanghaiTri	: ad(Yaoayaoyao
-TwelveMonke	: ys(1995)|01-Jan-
-Babe		: (1995)|01-Jan-1995
-DeadManWal	: king(1995)|01-Ja
-RichardIII	: (1995)|22-Jan-199
-Seven(Se7en	: )(1995)|01-Jan-1
-UsualSuspec	: ts,The(1995)|14
-MightyAphro	: dite(1995)|30-Oc
-Postino,Il	: (1994)|01-Jan-199
-Mr.Holland	: sOpus(1995)|29-
-FrenchTwist	: (Gazonmaudit)(
-FromDuskTi	: llDawn(1996)|05
-WhiteBalloo	: n,The(1995)|01-
-Antonia'sLi	: ne(1995)|01-Jan-
-AngelsandI	: nsects(1995)|01-
-MuppetTreas	: ureIsland(1996)
-Braveheart(	: 1995)|16-Feb-1996
-TaxiDriver	: (1976)|16-Feb-199
-Rumbleinth	: eBronx(1995)|23
-Birdcage,Th	: e(1996)|08-Mar-1
-BrothersMcM	: ullen,The(1995)
-BadBoys(19	: 95)|01-Jan-1995||
-Apollo13(1	: 995)|01-Jan-1995|
-BatmanForev	: er(1995)|01-Jan-
-Belledejou	: r(1967)|01-Jan-1
+ToyStory:(1995)|01-Jan-1995
+GoldenEye:(1995)|01-Jan-1995
+FourRooms:(1995)|01-Jan-1995
+GetShorty:(1995)|01-Jan-1995
+Copycat:(1995)|01-Jan-1995
+ShanghaiTri:ad(Yaoayaoyao
+TwelveMonke:ys(1995)|01-Jan-
+Babe:(1995)|01-Jan-1995
+DeadManWal:king(1995)|01-Ja
+RichardIII:(1995)|22-Jan-199
+Seven(Se7en:)(1995)|01-Jan-1
+UsualSuspec:ts,The(1995)|14
+MightyAphro:dite(1995)|30-Oc
+Postino,Il:(1994)|01-Jan-199
+Mr.Holland:sOpus(1995)|29-
+FrenchTwist:(Gazonmaudit)(
+FromDuskTi:llDawn(1996)|05
+WhiteBalloo:n,The(1995)|01-
+Antonia'sLi:ne(1995)|01-Jan-
+AngelsandI:nsects(1995)|01-
+MuppetTreas:ureIsland(1996)
+Braveheart(:1995)|16-Feb-1996
+TaxiDriver:(1976)|16-Feb-199
+Rumbleinth:eBronx(1995)|23
+Birdcage,Th:e(1996)|08-Mar-1
+BrothersMcM:ullen,The(1995)
+BadBoys(19:95)|01-Jan-1995||
+Apollo13(1:995)|01-Jan-1995|
+BatmanForev:er(1995)|01-Jan-
+Belledejou:r(1967)|01-Jan-1
+test: test details
+new:testdetails
+new:testdetails
