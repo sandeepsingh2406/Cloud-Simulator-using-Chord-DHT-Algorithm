@@ -10,6 +10,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.Random
 
+case class GetAllDetails(nodeIndex: Int)
+
 case class GetNodeHashedActors(nodeIndex : Int)
 
 case class GetItemDetail(itemString : String,nodeIndex : Int)
@@ -282,6 +284,31 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       println("After FindSuccessor case: new successor for new node: "+newNode+" value is: "+this.successor)
       orignalSender ! "JoinNode Done for: "+newNode
     }
+
+
+      case  GetAllDetails(nodeIndex: Int)=>{
+        val originalSender = sender
+        var nodeDetails: String=""
+
+        nodeDetails+="\n\nNode "+nodeIndex+"\n"
+        nodeDetails+="Successor: "+this.successor+", Predecessor: "+this.predecessor+"\n"
+        nodeDetails+="Finger Table:\n"
+        for(i <- 0 until this.fingerTable.length)
+          {
+            nodeDetails+="\t"+fingerTable(i)(0)+" -> "+ fingerTable(i)(1)+"\n"
+          }
+        if(this.listOfItems.size!=0)
+           nodeDetails+="List of Items:\n"
+
+        for ((tempName, tempDetail) <- this.listOfItems)
+        {
+          nodeDetails+="\t"+tempDetail+"\n"
+        }
+
+        originalSender ! nodeDetails
+
+      }
+
 
     /* this case is to instantiate the ring for the chord algorithm with the first node as received to add */
     case CreateRing(nodeArrayActors:Array[String], nodeIndex:Int) =>
@@ -998,5 +1025,10 @@ object chordMainMethod {
 
     return "done"
   }
+  def SnapshotActors(nodeIndex:Int) :String = {
+    val actorRef = system.actorSelection("akka://ChordProtocolHW4/user/node_" + nodeIndex.toString)
+    val future = actorRef ? GetAllDetails(nodeIndex)
 
-}
+    return (Await.result(future, timeout.duration).asInstanceOf[String])
+  }
+  }
