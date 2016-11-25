@@ -87,7 +87,7 @@ class Service() {
 
 
             if (response.equals("not found")) {
-              logger.error("Response: Error! Not found at Node \""+node_id+"\"")
+              logger.info("Response: Not found at Node \""+node_id+"\"")
               complete(s"Movie not found")
 
             }
@@ -142,7 +142,7 @@ class Service() {
               }
             }
             else {
-              logger.info("Response: Ring does not contain any node currently. Cannot store movie item.")
+              logger.error("Response: Error! Ring does not contain any node currently. Cannot store movie item.")
               println("chordMainMethod.ActorJoined.size==0")
               complete(s"Ring does not contain any node currently")
             }
@@ -156,6 +156,8 @@ class Service() {
             var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt;
             println("insertNode, list size:" + chordMainMethod.ActorJoined.size)
             logger.info("Request Received: Insert Node " + nodeId)
+            logger.info("Attempting to insert node in the ring.")
+
 
             if(nodeId>=chordMainMethod.totalNodes)
               {
@@ -163,43 +165,46 @@ class Service() {
                 complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes)
               }
 
-            if (chordMainMethod.ActorJoined.size == 0) {
-
-              println("chordMainMethod.ActorJoined.size==0")
-              //create ring called
-              val abc = chordMainMethod.CreateRingWithNode(nodeId)
-              println("Back from ring :" + abc + ", Node: " + nodeId)
-
-              println("Sending to web " + nodeId)
-
-              logger.info("Response: Ring created with first node: " + nodeId+". Current Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
-
-              complete(s"Ring started with Node " + nodeId)
-            }
             else {
-              if (chordMainMethod.ActorJoined.contains(nodeId)) {
-                logger.info("Response: Node "+nodeId+" already exists in the ring")
+              if (chordMainMethod.ActorJoined.size == 0) {
 
-                complete(s"Node " + nodeId + " already exists in the ring.")
-              }
-              else {
-
-                //joinring called
-                val abc = chordMainMethod.InsertNodeInRing(nodeId.toInt)
-                println("Back from ring join :" + abc + ", Node: " + nodeId)
+                println("chordMainMethod.ActorJoined.size==0")
+                //create ring called
+                val abc = chordMainMethod.CreateRingWithNode(nodeId)
+                println("Back from ring :" + abc + ", Node: " + nodeId)
 
                 println("Sending to web " + nodeId)
 
-                logger.info("Added Node " + nodeId + " to the ring. Current Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
-                complete(s"Added Node " + nodeId + " to the ring.")
+                logger.info("Response: Ring created with first node: " + nodeId + ". Current Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
 
+                complete(s"Ring started with Node " + nodeId)
+              }
+              else {
+                if (chordMainMethod.ActorJoined.contains(nodeId)) {
+                  logger.error("Response: Error! Node " + nodeId + " already exists in the ring")
+
+                  complete(s"Node " + nodeId + " already exists in the ring.")
+                }
+                else {
+
+                  //joinring called
+                  val abc = chordMainMethod.InsertNodeInRing(nodeId.toInt)
+                  println("Back from ring join :" + abc + ", Node: " + nodeId)
+
+                  println("Sending to web " + nodeId)
+
+                  logger.info("Added Node " + nodeId + " to the ring. Current Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+                  complete(s"Added Node " + nodeId + " to the ring.")
+
+
+                }
 
               }
-
+            }
             }
 
           }
-      }
+
 
 
       object Route5 {
@@ -210,7 +215,7 @@ class Service() {
             var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt
 
             logger.info("Request Received: Remove Node " + nodeId)
-            logger.info("Attempting to removing Node " + nodeId)
+            logger.info("Attempting to leave Node " + nodeId)
 
             if (chordMainMethod.ActorJoined.size == 0) {
 
@@ -228,9 +233,9 @@ class Service() {
               //delete method call and key transfer method call
               val abc = chordMainMethod.DeleteNodeInRing(nodeId.toInt)
               println("Back from ring leave:" + abc + ", Node: " + nodeId)
-              logger.info("Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+              logger.info("Node " + nodeId + " left from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
 
-              complete(s"Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
+              complete(s"Node " + nodeId + " left from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
             }
           }
       }
