@@ -61,8 +61,7 @@ object MyUserActorDriver {
     val simulationDuration = duration.seconds.fromNow;
     val random = Random;
     for(i <- 0 until numberOfUsers){
-      val id = random.nextInt(numberOfUsers);
-      val userNode = actorSystem.actorSelection(ParameterConstants.userActorNamePrefix + ParameterConstants.userNamePrefix + id);
+      val userNode = actorSystem.actorSelection(ParameterConstants.userActorNamePrefix + ParameterConstants.userNamePrefix + i);
       logger.info("startSimulation() " + userNode.pathString);
       userNode ! writeRequest(0, maxWriteRequests);
       userNode ! readRequest(0, maxReadRequests);
@@ -75,7 +74,7 @@ object MyUserActorDriver {
     import actorSystem.dispatcher
     val url = "http://127.0.0.1:8080/getSnapshot";
     actorSystem.scheduler.schedule(Duration(5, TimeUnit.SECONDS), Duration(interval*60, TimeUnit.SECONDS)) {
-      logger.info(getURLContent(url));
+      getURLContent(url);
     }
   }
 
