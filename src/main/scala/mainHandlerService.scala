@@ -1,7 +1,8 @@
 import java.net.InetAddress
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import java.io.File
+import java.io.{BufferedWriter, File, FileWriter, PrintWriter}
+import java.util.Calendar
 
 import akka.actor._
 import akka.http.scaladsl.Http
@@ -38,6 +39,8 @@ class Service() {
 
 //Initiate a logger
   val logger = Logger("mainHandlerService Class")
+
+
 
   def method(args: Array[String]): Unit = {
 
@@ -100,7 +103,7 @@ class Service() {
 
             }
             else {
-              logger.info("Response: Movie found at Node \""+node_id+"\". Movie name, details: "+response)
+              logger.info("Response: Movie found at Node \""+node_id+"\". Movie: "+response)
               complete(s"Movie found at Node " + node_id + ": " + response)
             }}
 
@@ -298,9 +301,31 @@ class Service() {
     object Route7 {
       val route =path("getSnapshot") {
 
+        logger.info("Snapshot request received")
+
+        val pw = new PrintWriter(new BufferedWriter(new FileWriter("ChordSnapshot.txt", true)));
+
         //request to get snapshot of all node actors
         println("getting snapshot of entire system")
+        pw.println("---------------------------------------------------------------------------")
+        pw.println("Snapshot: Timestamp: "+Calendar.getInstance().getTime())
 
+
+
+        if(chordMainMethod.ActorJoined.size == 0)
+          {
+            pw.println("No nodes in the cloud ring.")
+          }
+        else{
+          for(counter <- 0 until chordMainMethod.ActorJoined.length)
+            {
+              pw.write(chordMainMethod.SnapshotActors(chordMainMethod.ActorJoined(counter)))
+            }
+        }
+
+
+          pw.close()
+        logger.info("Snapshot completed. File: ChordSnapshot.txt")
         complete("done")
         }
 
