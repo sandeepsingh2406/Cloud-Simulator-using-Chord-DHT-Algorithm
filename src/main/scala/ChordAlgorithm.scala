@@ -940,7 +940,7 @@ object chordMainMethod {
     Thread.sleep(5000)
     val thread1 = new Thread(new Runnable {
       def run() {
-        MyUserActorDriver.main(Array[String](noOfUsers.toString,minReq.toString,maxReq.toString,readWrite))
+        MyUserActorDriver.main(Array[String](noOfUsers.toString,minReq.toString,maxReq.toString,readWrite,simulationMark.toString))
       }
     })
     thread1.start()
@@ -950,7 +950,7 @@ object chordMainMethod {
     var start = System.currentTimeMillis();
     println("start @ "+start)
 
-    var end = start + (120*1000) //(simulationDuration*1000) // 60 seconds * 1000 ms/sec
+    var end = start + (simulationDuration*60*1000) // 60 seconds * 1000 ms/sec
     println("end @ "+end)
 
     while (System.currentTimeMillis() < end)
