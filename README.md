@@ -50,7 +50,76 @@ Scala main classes(/src/main/scala/):
 
 1. **ChordAlgorithm.scala**:
 
-<Description goes here(Kruti)>
+
+	This file contains the implementation of Chord Algorithm using Akka Actors. Each node in the ring is represented by an Akka Actor.
+	The two actors present in this file are: ** ChordMainActor ** and ** CloudNodeActor **. The ChordMainActor is to instantiate the main actor 
+	of the cloud and takes in the parameter : total nodes which instantiates CloudNodeActor. The number of actors created for CloudNodeActor is equal
+	to the number of nodes as entered by the user which shows the total number of systems in the cloud. These systems are initially inactive.
+	In order to activate each node in the ring the requests are sent from the Webservice. If the first node is joining the ring, that it implies we are 
+	creating the ring and now we can interact with the node present in the ring. After the first node is added to the ring, any other node can join the
+	ring on the basis of any random node active in the ring. Once nodes are added to the ring, the other requests includes - leaving a node, adding an item 
+	to the nodes dataset, transfering keys when a new node joins or when a node leaves, stabilization of all nodes when a node joins or leaves and 
+	deleting an item from the nodes dataset. All the interations for performing these operations can be done through the webservice.
+	
+	
+	### chordMainMethod ###
+	Below are the main functions:
+	
+	* Main() - this function is called when ChordAlgorithm is run. This accepts the input parameter : No of users, Total System, Min Requests/min, 
+	Max Requests/min, SimulationDuration, Simulation Mark, Items requested (accepts a txt file) and Ratio of Read/Write requests. This main method
+	is responsible for instantiating the ChordMainActor and which in turn instantiates CloudNodeActor. After the instantiation is complete, it 
+	makes a call to the ** mainHandlerService ** to start the web service. After the web service is started, it instantiates the cloud ring with some nodes
+	to create the cloud ring and make few nodes active. After this it activates ** MyUserActorDriver ** which simualates all the users request via the web service.
+	
+	* CreateRingWithNode() - this function is responsible to create the ring for chord with a node. This node is the only node active in the cloud.
+	
+	* InsertNodeInRing() - this function is responsible to add other nodes in an existing ring. The new node can join the ring on the basis of any active
+	node present in the ring. When a new node joins it internally performs operation such as transfer of keys (items), stabilize the ring where all nodes 
+	update their finger table.
+	
+	* LookupItem() - this function is responsible to perform FindSuccessor operation for any item that needs to be searched in the active nodes. It 
+	returns a node index at which the item (movie) exists else it responds "not found"
+	
+	* LookupListItem() - this function is responsible to check if an item - movie name exists with an active node in the ring. If the movie exists at the node, 
+	then it returns the item detail (movie details) else it responds with "not found" message. 
+	
+	* InsertItem() - this function is responsible to insert an item (movie) and its value (movie details) to the node at which it must be present.
+	
+	* DeleteNodeInRing() - this function is responsible to deactivate a node that is when a node is leaving the ring along with notifying every other node. 
+	This makes the node as inactive in the cloud ring, notifies its successor and predecessor to update their values, along with transfers all its keys (items)
+	to its successor and update the finger table of all nodes active in the system. If this is the only node active in the ring then the ring is deactivated
+	and all the items are deleted from this node. Now there will be no active nodes in the ring and inserting a node will start from creating a ring.
+	
+	* DeleteKey() - this function is responsible to delete an item (movie) if present at any node. The lookup for the item is already performed and if the 
+	response returns an active node, then deletion of key is performed for that node.
+	
+	* SnapshotActors() - this function is responsible to take snapshots of the system which is stored in ** ChordSnapshot.txt **. The snapshots contains
+	the active nodes, their successor, predecessor, their list of items and their finger table.
+	
+	### Actors ###
+	
+	* ChordMainActor - this is the main actor for instantiating the actors for the chord ring. The different cases in this actor are called from the
+	different definitions specified in chordMainMethod.
+	
+	* CloudNodeActor - this is the actor represnting each node in the ring. Each actor has its own successor, predecessor, finger table and list of items 
+	it will be storing. The important definitions in this actor are:
+	
+		1. transferKeys() - this function is responsible to transfer keys to the successor node when a node leaves.
+		
+		2. nodeLeaveUpdateSucc() - this function is responsible to update the leaving nodes successor to update its predecessor node.
+		
+		3. nodeLeaveUpdatePred() - this function is responsible to update the leaving nodes predecessor to update its successor node.
+		
+		4. locate_successor() - this function is responsible to iterate through the rows of finger table of the current node and update 
+		their successor nodes column.
+		
+		5. find_successor() - this function is responsible to find the successor for the current node.
+		
+		6. find_predecessor() - this function is responsible to find the predecessor for the current node.
+		
+		7. closest_preceding_finger() - this function is responsible to find the closes preceding nodes for a specified node.
+		
+		8. Stabilize() - this function is responsible to update the successor and predecessor for a node. This function is called when a new node joins the ring. This helps in updating the successor and predecessor for all nodes active in the ring. This internally calls notifynode which also along with updating the predecessor transfers the key from the node if required.
 
 
 
