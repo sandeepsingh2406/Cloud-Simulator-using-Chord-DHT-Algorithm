@@ -10,3 +10,7 @@ libraryDependencies += "com.typesafe.akka" % "akka-http-experimental_2.11" % "2.
 
 libraryDependencies += "commons-io" % "commons-io" % "2.5"
 
+libraryDependencies ++= Seq("org.slf4j" % "slf4j-api" % "1.7.5",
+  "org.slf4j" % "slf4j-simple" % "1.7.5")
+
+libraryDependencies += "org.clapper" % "grizzled-slf4j_2.11" % "1.0.2"
