@@ -1,20 +1,13 @@
 1. https://github.com/SumeetPande/Chord-Protocol---Scala/blob/master/project3/src/main/scala/project3.scala
 
+2. http://alvinalexander.com/scala/scala-akka-actors-ping-pong-simple-example
 
-Important:
-https://raw.githubusercontent.com/takirala/ChordDHT/master/src/main/scala/Project3.scala
+3.https://github.com/mayank3d/Chord_Protocol_DHT
 
-Very simple, manual everything
-https://github.com/mayank3d/Chord_Protocol_DHT
+4. https://github.com/nagapandupotti/chord-dht/blob/master/Chord.scala
 
-673 lines, uses await, https://github.com/nagapandupotti/chord-dht/blob/master/Chord.scala
+5. https://seattle.poly.edu/wiki/EducationalAssignments/Chord
 
+6. https://www.toptal.com/scala/concurrency-and-fault-tolerance-made-easy-an-intro-to-akka
 
-New link: https://github.com/Riddle4045/ChordP2P/blob/master/Project3.scala
-
-leave()
-    transfer all keys to successor
-    successor.predecessor = None
-    predecessor.successor = predecessor
-	
-https://seattle.poly.edu/wiki/EducationalAssignments/Chord
+7. http://alvinalexander.com/scala/how-to-log-output-file-grizzled-slf4j-scala-simplelogger.properties
