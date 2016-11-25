@@ -302,8 +302,8 @@ object chordMainMethod {
     var listFileItems = args(4).toString()
     var simulationDuration = args(5).toInt
     var simulationMark = args(6).toInt
-    var readRequest = args(7).toInt
-    var writeRequest = args(8).toInt*/
+    var abhijay.readRequest = args(7).toInt
+    var abhijay.writeRequest = args(8).toInt*/
 
     var noOfUsers = 2
     var totalNodes = 10

@@ -8,3 +8,7 @@ Key Transfer (node join/leave)
 More than 8 nodes check
 Unit and Integration Test
 Read Me
+
+If time permits:
+1] Handling deal letters encountered
+[INFO] [11/24/2016 18:02:25.705] [ChordProtocolHW4-akka.actor.default-dispatcher-6] [akka://ChordProtocolHW4/user/node_-1] Message [GetSuccessor] from Actor[akka://ChordProtocolHW4/temp/$a] to Actor[akka://ChordProtocolHW4/user/node_-1] was not delivered. [1] dead letters encountered. This logging can be turned off or adjusted with configuration settings 'akka.log-dead-letters' and 'akka.log-dead-letters-during-shutdown'.

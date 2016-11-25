@@ -54,7 +54,7 @@ class Service(){
       val route =
         parameters('getMovie) { (moviename1) =>
           //output goes here
-          println("getMovie")
+          println("abhijay.getMovie")
           var moviename=moviename1.replaceAll("^\"|\"$", "");
 
 
@@ -75,7 +75,7 @@ class Service(){
       val route =
         parameters('putMovie, 'MovieDetails) { (moviename1, moviedetails1) =>
           //output goes here
-          println("putMovie")
+          println("abhijay.putMovie")
           var moviename=moviename1.replaceAll("^\"|\"$", "");
           var moviedetails=moviedetails1.replaceAll("^\"|\"$", "");
 
