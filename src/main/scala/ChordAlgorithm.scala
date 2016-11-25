@@ -4,6 +4,7 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props, _}
 import akka.pattern.ask
 import akka.util.Timeout
 
+import scala.collection.immutable.HashMap
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -43,8 +44,16 @@ case class NotifyNode(notifyThisNode : Int, currentCallingNode : Int)
 
 case class GetClosesNodes(fingerNodeValue : String ,tempCurrNode : Int, requestOrigin : String)
 
+case class DeleteNode(nodeIndex : Int)
 
-class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor {
+case class UpdateItemsList(succNodeIndex : Int, newListItems : scala.collection.mutable.HashMap[String, String])
+
+case class SetPredecessor(newPred : Int)
+
+case class SetSuccessor(newSucc : Int)
+
+class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor
+with ActorLogging {
 
   var activenodes: Int = 0
   var NodeArrayActors  = Array.ofDim[String](TotalNodes)
@@ -55,6 +64,9 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
 
     case "startProcess" => {
       val originalSender = sender
+
+      var timestamp = System.currentTimeMillis()
+
       println("In Start Process")
       println("Master Node has been Initiated")
       println("Total nodes in the cloud: " + TotalNodes)
@@ -72,12 +84,16 @@ class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : 
 
       InitializeNodeHashTable
 
-      for (i <- 0 until TotalNodes) {
+      for (i <- 0 until TotalNodes)
+      {
         println("Inside for loop - instantiating actors for each computer in cloud with node: "+i)
         val workerNodes = ChordActorSys.actorOf(Props(new CloudNodeActor(NodeArrayActors(i),TotalNodes, activenodes, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
         val futureWorker = workerNodes ? "intiateEachNode"
         println(Await.result(futureWorker, timeout.duration).asInstanceOf[String])
+        log.info("Time taken to instatiate node: node_"+i.toString+" is: "+ (System.currentTimeMillis() - timestamp))
       }
+
+      log.info("Time taken to instantiate : "+TotalNodes.toString+" nodes is: "+ (System.currentTimeMillis() - timestamp))
 
       originalSender ! "done"
 
@@ -312,6 +328,13 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       orignalSender ! this.predecessor
     }
 
+    case SetPredecessor(newPred : Int) => {
+      val orignalSender = sender
+      println("Predecessor updating for: "+Index+" original value: "+this.predecessor+" new value: "+newPred)
+      this.predecessor = newPred
+      orignalSender ! "done"
+    }
+
     case StabilizeRing(nodeIndex : Int) => {
       val orignalSender = sender
       Stabilize(nodeIndex)
@@ -322,12 +345,32 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       val orignalSender = sender
       println("Get Successor for node: "+tempNode+" value: "+this.successor)
       orignalSender ! this.successor
-
     }
+
+    case SetSuccessor(newSucc : Int) => {
+      val originalSender = sender
+      println("Successor updating for: "+Index+" original value: "+this.successor+" new value: "+newSucc)
+      this.successor = newSucc
+      originalSender ! "done"
+    }
+
     case GetHashedValue(nodeIndex : Int) =>{
       val orignalSender = sender
       //println("Get Hashed Value for node: "+nodeIndex+" value: "+this.HashedValue)
       orignalSender ! this.HashedValue
+    }
+    case UpdateItemsList(succNodeIndex : Int, newListItems : scala.collection.mutable.HashMap[String, String]) => {
+      val originalSender = sender()
+      println("Initial set of keys with successor node: "+succNodeIndex+ " value: "+this.listOfItems.toString())
+      println("New keys to be inserted : "+newListItems.toString())
+      var tempName : String = ""
+      var tempDetail : String = ""
+
+      for((tempName, tempDetail) <- newListItems){
+        this.listOfItems += (tempName -> tempDetail)
+      }
+      println("After updating set of keys with node: "+succNodeIndex+ " value: "+this.listOfItems.toString())
+      originalSender ! "done"
     }
 
     case NotifyNode(notifyThisNode : Int, currentCallingNode : Int) => {
@@ -367,8 +410,92 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       val tempSuccVal = locate_successor(nodeIndex)
       orignalSender ! "Fixed Finger for " +nodeIndex
     }
+    case DeleteNode(nodeIndex : Int) => {
+      val originalSender = sender
+
+      val tempSucc = this.successor
+      val tempPred = this.predecessor
+      if(tempSucc != nodeIndex && tempPred != tempPred)
+      {
+        /* transfer the keys to the nodes successor */
+        println("call transfer keys to add the list of items in current node to its successor")
+        transferKeys(nodeIndex,tempSucc)
+
+        /* update : n.successor.predecessor = n.predecessor*/
+        println("call update successor node: successor node should update its predecessor to leaving nodes predecessor")
+        nodeLeaveUpdateSucc(nodeIndex,tempSucc,tempPred)
+
+        /*update n.predecessor.successor = n.successor*/
+        println("call update predecessor node: predecessor node should update its successesor to leaving nodes successor")
+        nodeLeaveUpdatePred(nodeIndex,tempPred,tempSucc)
+
+        this.predecessor = -1
+        this.successor = -1
+        this.isActiveNode = -1
+        chordMainMethod.ActorJoined -= nodeIndex
+        this.listOfItems.clear()
+        println("Current active nodes in system: "+chordMainMethod.ActorJoined)
+      }
+
+      for(i <- 0 until chordMainMethod.ActorJoined.length)
+      {
+        println("After delete node: update finger table for node: "+chordMainMethod.ActorJoined(i).toString)
+        val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + chordMainMethod.ActorJoined(i).toString)
+
+        val futureLocateSucc = tempActor ? LocateSuccessor(chordMainMethod.ActorJoined(i))
+
+        println(Await.result(futureLocateSucc, timeout.duration).asInstanceOf[String])
+      }
+      originalSender ! "Leaving node index: "+nodeIndex+" done and updated all other"
+    }
 
   }
+
+  def transferKeys(currNodeIndex: Int, successorNodeIndex : Int) :Unit ={
+    var tempListItems = this.listOfItems
+    var fetchRes : Int = -1
+    if(currNodeIndex != successorNodeIndex)
+    {
+      println("Transfer keys for node: "+currNodeIndex+" to its successor: "+successorNodeIndex)
+      val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + successorNodeIndex.toString)
+
+      val futureSucc = tempActor ? UpdateItemsList(successorNodeIndex, tempListItems)
+
+      fetchRes = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
+    }
+
+  }
+
+  def nodeLeaveUpdateSucc(currNodeIndex : Int, successorNodeIndex : Int, currNodePred: Int) : Unit =
+  {
+    var fetchRes : Int = -1
+    if(currNodeIndex != successorNodeIndex)
+    {
+      println("Node Leaving: "+currNodeIndex+" with updating successor nodes: "+successorNodeIndex+" predecessor value")
+      val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + successorNodeIndex.toString)
+
+      val futurePred = tempActor ? SetPredecessor(currNodePred)
+
+      fetchRes = Await.result(futurePred, timeout.duration).asInstanceOf[Int]
+    }
+
+  }
+
+  def nodeLeaveUpdatePred(currNodeIndex : Int, predNodeIndex : Int, currNodeSucc: Int) : Unit =
+  {
+    var fetchRes : Int = -1
+    if(currNodeIndex != predNodeIndex)
+    {
+      println("Node Leaving: "+currNodeIndex+" with updating predecessor nodes: "+predNodeIndex+" successors value")
+      val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + predNodeIndex.toString)
+
+      val futurePred = tempActor ? SetSuccessor(currNodeSucc)
+
+      fetchRes = Await.result(futurePred, timeout.duration).asInstanceOf[Int]
+    }
+
+  }
+
 
   def locate_successor(currActorNodeIndex : Int): Unit ={
 
@@ -395,7 +522,6 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       }
       else {
         val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + newSucc.toString)
-
 
         val futureSucc = tempActor ? GetSuccessor(newSucc)
 
@@ -649,6 +775,7 @@ object chordMainMethod {
 
   def main(args: Array[String])
   {
+
     println("Input Arguements: No of User, No of nodes, min and max msgs (by each user), simulation duraion , time mark for simulation, items list,  ")
 
     println("Enter total nodes in system: ")
@@ -743,6 +870,19 @@ object chordMainMethod {
 
     return "done"
 
+  }
+
+  def DeleteNodeInRing(nodeIndex : Int) : String ={
+
+    println("Leaving node index : "+nodeIndex)
+
+    val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
+    //println(actorRef.pathString)
+    val future = actorRef ? DeleteNode(nodeIndex)
+
+    println(Await.result(future, timeout.duration).asInstanceOf[String])
+
+    return "done"
   }
 
 }
