@@ -38,7 +38,7 @@ class UserActor(userId: Int) extends Actor with ActorLogging {
     case getMovie(movieName) => {
       var url = URL + "?getMovie=" + movieName;
       var result = getURLContent(url);
-      log.info("User" + userId + "; getMovie Result: " + result);
+      log.info("User" + userId + "; getMovie: " + movieName + "; Result: " + result);
     }
 
     case putMovieFileAndCloud(movieName, movieDetails, movieDatabaseFile) => {
@@ -58,7 +58,7 @@ class UserActor(userId: Int) extends Actor with ActorLogging {
     case deleteMovie(movieName) => {
       var url = URL + "?deleteMovie=" + movieName;
       var result = getURLContent(url);
-      log.info("User" + userId + "; deleteMovie Result: " + result);
+      log.info("User" + userId + "; deleteMovie: " + movieName + "; Result: " + result);
     }
 
     case readRequest(min, max) => {
@@ -97,8 +97,8 @@ class UserActor(userId: Int) extends Actor with ActorLogging {
       for(i <- min until max+1){
         val id = random.nextInt(numberOfMovies);
         val movieTokens = listOfMovies(id).split("\\@");
-        log.info("Adding movie: " + movieTokens(0));
-        deleteMovieMethod(movieTokens(0));
+        log.info("Deleting movie: " + movieTokens(0));
+        self ! deleteMovie(movieTokens(0));
         Thread.sleep(((60/max).ceil.toLong)*1000);
       }
     }
@@ -143,12 +143,12 @@ class UserActor(userId: Int) extends Actor with ActorLogging {
   def putMovieMethod(movieName: String, movieDetails:String): Unit ={
     var url = URL + "?putMovie=" + movieName + "&movieDetails=" + movieDetails;
     var result = getURLContent(url);
-    log.info("User" + userId + "; putMovie Result: " + result);
+    log.info("User" + userId + "; putMovie: " + movieName + ";  Result: " + result);
   }
 
   def deleteMovieMethod(movieName: String): Unit ={
     var url = URL + "?deleteMovie=" + movieName;
     var result = getURLContent(url);
-    log.info("User" + userId + "; deleteMovie Result: " + result);
+    log.info("User" + userId + "; deleteMovie: " + movieName + "; Result: " + result);
   }
 }

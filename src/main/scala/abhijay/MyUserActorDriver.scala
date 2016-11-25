@@ -30,12 +30,18 @@ object MyUserActorDriver {
       divider = 13/(4+1) = 13/5 = 2
 */
       val tokens = ParameterConstants.ratio.split("\\:");
-      val readRequest = tokens(0).toInt;
+      val readRequests = tokens(0).toInt;
       val writeReqeusts = tokens(1).toInt;
-      val totalRequests = readRequest + writeReqeusts;
+      val totalRequests = readRequests + writeReqeusts;
       val divider = (ParameterConstants.maxRequests / totalRequests).toInt;
-      val maxReadRequests = divider * readRequest;
+      val maxReadRequests = divider * readRequests;
       val maxWriteRequests = divider * writeReqeusts;
+
+    logger.info(readRequests)
+    logger.info(writeReqeusts)
+    logger.info(totalRequests)
+    logger.info(maxReadRequests)
+    logger.info(maxWriteRequests)
 
     instantiateActors(ParameterConstants.numberOfUsers, actorSystem);
 //    val listOfMovies = readFile(ParameterConstants.movieDatabaseFile);
