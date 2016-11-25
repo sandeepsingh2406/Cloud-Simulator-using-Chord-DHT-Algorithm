@@ -178,8 +178,8 @@ class Service() {
 
             if(nodeId>=chordMainMethod.totalNodes)
               {
-                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+chordMainMethod.totalNodes)
-                complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes)
+                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+chordMainMethod.totalNodes-1)
+                complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes-1)
               }
 
             else {
@@ -295,11 +295,21 @@ class Service() {
 
           }
       }
+    object Route7 {
+      val route =path("getSnapshot") {
+
+        //request to get snapshot of all node actors
+        println("getting snapshot of entire system")
+
+        complete("done")
+        }
+
+    }
 
 
       //specify different handlers(called routes here) for our web service
       object MainRouter {
-        val routes = Route2.route ~ Route3.route ~ Route4.route ~ Route5.route ~ Route6.route ~ Route1.route
+        val routes = Route2.route ~ Route3.route ~ Route4.route ~ Route5.route ~ Route6.route ~ Route7.route ~ Route1.route
       }
 
       val localhost = InetAddress.getLocalHost
