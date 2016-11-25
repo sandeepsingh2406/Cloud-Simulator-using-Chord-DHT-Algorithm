@@ -4,7 +4,6 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props, _}
 import akka.pattern.ask
 import akka.util.Timeout
 
-import scala.collection.immutable.HashMap
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -47,6 +46,8 @@ case class GetClosesNodes(fingerNodeValue : String ,tempCurrNode : Int, requestO
 case class DeleteNode(nodeIndex : Int)
 
 case class UpdateItemsList(succNodeIndex : Int, newListItems : scala.collection.mutable.HashMap[String, String])
+
+case class addKeys_whennodejoin( transfer_listofitems : scala.collection.mutable.HashMap[String, String])
 
 case class SetPredecessor(newPred : Int)
 
@@ -344,6 +345,14 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       orignalSender ! this.successor
     }
 
+    case addKeys_whennodejoin(transfer_listofitems: scala.collection.mutable.HashMap[String, String]) => {
+
+      for ((tempName, tempDetail) <- transfer_listofitems) {
+        this.listOfItems+=(tempName -> tempDetail)
+      }
+    }
+
+
     case SetSuccessor(newSucc : Int) => {
       val originalSender = sender
       println("Successor updating for: "+Index+" original value: "+this.successor+" new value: "+newSucc)
@@ -385,10 +394,38 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         //transfer keys
 
         this.predecessor = notifyThisNode;
+
+        var transfer_listofitems = scala.collection.mutable.HashMap[String, String]()
+
+        for((tempName, tempDetail) <- this.listOfItems)
+        {
+
+          println("checking if items need to be transferred from "+currentCallingNode+" to "+notifyThisNode)
+          if(chordMainMethod.getHash(tempName,m)<= chordMainMethod.SortedHashedActor(notifyThisNode))
+          {
+            println("movie to be transferred: "+tempName)
+
+            //            val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + chordMainMethod.ActorJoined(i).toString)
+            transfer_listofitems += (tempName -> tempDetail)
+            this.listOfItems -= tempName
+          }
+        }
+        if(transfer_listofitems.size>0)
+          {
+            val tempActor = context.actorSelection("akka://ChordProtocolHW4/user/node_" + notifyThisNode.toString)
+            tempActor ! addKeys_whennodejoin(transfer_listofitems)
+          }
+
       }
 
 
+
+
+
+
+
       println("New predecessor for node: "+currentCallingNode+" value is: "+this.predecessor)
+
     }
 
     case GetClosesNodes(fingerNodeValue : String ,tempCurrNode : Int, requestOrigin : String) => {
@@ -477,6 +514,8 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
     }*/
 
   }
+
+
 
   def transferKeys(currNodeIndex: Int, successorNodeIndex : Int) :Unit ={
     var tempListItems = this.listOfItems
