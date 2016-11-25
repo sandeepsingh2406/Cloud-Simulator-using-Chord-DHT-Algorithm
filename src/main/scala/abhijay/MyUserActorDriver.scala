@@ -2,7 +2,6 @@ package abhijay
 
 import akka.actor.{ActorSystem, Props}
 import grizzled.slf4j.Logger
-
 import scala.concurrent.duration._
 import scala.io.Source
 import scala.util.Random
@@ -17,6 +16,14 @@ object MyUserActorDriver {
   val logger = Logger("Simulation started");
 
   def main(args: Array[String]): Unit = {
+    println(args.deep.mkString(", "));
+    if(args.length != 0){
+      ParameterConstants.numberOfUsers = args(0).toInt;
+      ParameterConstants.minRequests = args(1).toInt;
+      ParameterConstants.maxRequests = args(2).toInt;
+      ParameterConstants.ratio = args(3);
+    }
+
 
     val user = actorSystem.actorOf(Props(new UserActor(0)), name = ParameterConstants.userNamePrefix+0);
     println(user.path);
