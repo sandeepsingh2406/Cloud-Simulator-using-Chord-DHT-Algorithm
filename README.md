@@ -109,7 +109,7 @@ libraryDependencies += "org.scalatest"  %% "scalatest"   % "2.2.4" % Test
 These are in the order: noOfUsers totalNodes minRequests maxRequests simulationDuration snapshotMark moviefilePath readWriteRatio
 
 For example:
-5 8 0 20 10 2 "movies.txt" "4:1"
+5 8 0 20 5 2 "movies.txt" "4:1"
 
 3. Run chordMainMethod
 
