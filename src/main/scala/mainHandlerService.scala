@@ -301,6 +301,8 @@ class Service() {
     object Route7 {
       val route =path("getSnapshot") {
 
+        logger.info("Snapshot request received")
+
         val pw = new PrintWriter(new BufferedWriter(new FileWriter("ChordSnapshot.txt", true)));
 
         //request to get snapshot of all node actors
@@ -323,6 +325,7 @@ class Service() {
 
 
           pw.close()
+        logger.info("Snapshot completed. File: ChordSnapshot.txt")
         complete("done")
         }
 
