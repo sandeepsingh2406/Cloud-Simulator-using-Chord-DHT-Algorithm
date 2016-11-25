@@ -1,75 +1,75 @@
-Toy Story@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Toy%20Story%20(1995)|0|0|0|1|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Toy%20Story@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Toy%20Story%20(1995)|0|0|0|1|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0
 GoldenEye@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?GoldenEye%20(1995)|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0
-Four Rooms@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Four%20Rooms%20(1995)|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0
-Get Shorty@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Get%20Shorty%20(1995)|0|1|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
+Four%20Rooms@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Four%20Rooms%20(1995)|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0
+Get%20Shorty@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Get%20Shorty%20(1995)|0|1|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
 Copycat@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Copycat%20(1995)|0|0|0|0|0|0|1|0|1|0|0|0|0|0|0|0|1|0|0
-Shanghai Triad@(Yao a yao yao dao waipo qiao)@(1995)|01-Jan-1995||http://us.imdb.com/Title?Yao+a+yao+yao+dao+waipo+qiao+(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Twelve Monkeys@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Twelve%20Monkeys%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|1|0|0|0
+Shanghai%20Triad@(Yao%20a%20yao%20yao%20dao%20waipo%20qiao)@(1995)|01-Jan-1995||http://us.imdb.com/Title?Yao+a+yao+yao+dao+waipo+qiao+(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Twelve%20Monkeys@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Twelve%20Monkeys%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|1|0|0|0
 Babe@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Babe%20(1995)|0|0|0|0|1|1|0|0|1|0|0|0|0|0|0|0|0|0|0
-Dead Man Walking@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Dead%20Man%20Walking%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Richard III@(1995)|22-Jan-1996||http://us.imdb.com/M/title-exact?Richard%20III%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0
+Dead%20Man%20Walking@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Dead%20Man%20Walking%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Richard%20III@(1995)|22-Jan-1996||http://us.imdb.com/M/title-exact?Richard%20III%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0
 Seven@(Se7en)@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Se7en%20(1995)|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|1|0|0
-Usual Suspects, The@(1995)|14-Aug-1995||http://us.imdb.com/M/title-exact?Usual%20Suspects,%20The%20(1995)|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|1|0|0
-Mighty Aphrodite@(1995)|30-Oct-1995||http://us.imdb.com/M/title-exact?Mighty%20Aphrodite%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
-Postino, Il@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Postino,%20Il%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0
-Mr. Holland's Opus@(1995)|29-Jan-1996||http://us.imdb.com/M/title-exact?Mr.%20Holland's%20Opus%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-French Twist@(Gazon maudit)@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Gazon%20maudit%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
-From Dusk Till Dawn@(1996)|05-Feb-1996||http://us.imdb.com/M/title-exact?From%20Dusk%20Till%20Dawn%20(1996)|0|1|0|0|0|1|1|0|0|0|0|1|0|0|0|0|1|0|0
-White Balloon, The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Badkonake%20Sefid%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Antonia's Line@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Antonia%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Angels and Insects@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Angels%20and%20Insects%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0
-Muppet Treasure Island@(1996)|16-Feb-1996||http://us.imdb.com/M/title-exact?Muppet%20Treasure%20Island%20(1996)|0|1|1|0|0|1|0|0|0|0|0|0|1|0|0|0|1|0|0
+Usual%20Suspects,%20The@(1995)|14-Aug-1995||http://us.imdb.com/M/title-exact?Usual%20Suspects,%20The%20(1995)|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|1|0|0
+Mighty%20Aphrodite@(1995)|30-Oct-1995||http://us.imdb.com/M/title-exact?Mighty%20Aphrodite%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Postino,%20Il@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Postino,%20Il%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0
+Mr.%20Holland's%20Opus@(1995)|29-Jan-1996||http://us.imdb.com/M/title-exact?Mr.%20Holland's%20Opus%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+French%20Twist@(Gazon%20maudit)@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Gazon%20maudit%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
+From%20Dusk%20Till%20Dawn@(1996)|05-Feb-1996||http://us.imdb.com/M/title-exact?From%20Dusk%20Till%20Dawn%20(1996)|0|1|0|0|0|1|1|0|0|0|0|1|0|0|0|0|1|0|0
+White%20Balloon,%20The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Badkonake%20Sefid%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Antonia's%20Line@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Antonia%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Angels%20and%20Insects@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Angels%20and%20Insects%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0
+Muppet%20Treasure%20Island@(1996)|16-Feb-1996||http://us.imdb.com/M/title-exact?Muppet%20Treasure%20Island%20(1996)|0|1|1|0|0|1|0|0|0|0|0|0|1|0|0|0|1|0|0
 Braveheart@(1995)|16-Feb-1996||http://us.imdb.com/M/title-exact?Braveheart%20(1995)|0|1|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0
-Taxi Driver@(1976)|16-Feb-1996||http://us.imdb.com/M/title-exact?Taxi%20Driver%20(1976)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
-Rumble in the Bronx@(1995)|23-Feb-1996||http://us.imdb.com/M/title-exact?Hong%20Faan%20Kui%20(1995)|0|1|1|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0
-Birdcage, The@(1996)|08-Mar-1996||http://us.imdb.com/M/title-exact?Birdcage,%20The%20(1996)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
-Brothers McMullen, The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Brothers%20McMullen,%20The%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
-Bad Boys@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Bad%20Boys%20(1995)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
-Apollo 13@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Apollo%2013%20(1995)|0|1|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
-Batman Forever@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Batman%20Forever%20(1995)|0|1|1|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0
-Belle de jour@(1967)|01-Jan-1967||http://us.imdb.com/M/title-exact?Belle%20de%20jour%20(1967)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Crimson Tide@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Crimson%20Tide%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|1|0
+Taxi%20Driver@(1976)|16-Feb-1996||http://us.imdb.com/M/title-exact?Taxi%20Driver%20(1976)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
+Rumble%20in%20the%20Bronx@(1995)|23-Feb-1996||http://us.imdb.com/M/title-exact?Hong%20Faan%20Kui%20(1995)|0|1|1|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0
+Birdcage,%20The@(1996)|08-Mar-1996||http://us.imdb.com/M/title-exact?Birdcage,%20The%20(1996)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Brothers%20McMullen,%20The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Brothers%20McMullen,%20The%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Bad%20Boys@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Bad%20Boys%20(1995)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
+Apollo%2013@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Apollo%2013%20(1995)|0|1|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
+Batman%20Forever@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Batman%20Forever%20(1995)|0|1|1|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0
+Belle%20de%20jour@(1967)|01-Jan-1967||http://us.imdb.com/M/title-exact?Belle%20de%20jour%20(1967)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Crimson%20Tide@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Crimson%20Tide%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|1|0
 Crumb@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Crumb%20(1994)|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0
 Desperado@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Desperado%20(1995)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|1|0|1|0|0
-Doom Generation, The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Doom%20Generation,%20The%20(1995)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
-Free Willy 2: The Adventure Home@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Free%20Willy%202:%20The%20Adventure%20Home%20(1995)|0|0|1|0|1|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Mad Love@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Mad%20Love%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0
+Doom%20Generation,%20The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Doom%20Generation,%20The%20(1995)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
+Free%20Willy%202:%20The%20Adventure%20Home@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Free%20Willy%202:%20The%20Adventure%20Home%20(1995)|0|0|1|0|1|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Mad%20Love@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Mad%20Love%20(1995)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0
 Nadja@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Nadja%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Net, The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Net,%20The%20(1995)|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|1|0|0
-Strange Days@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Strange%20Days%20(1995)|0|1|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0
-To Wong Foo, Thanks for Everything! Julie Newmar@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?To%20Wong%20Foo,%20Thanks%20for%20Everything!%20Julie%20Newmar%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
-Billy Madison@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Billy%20Madison%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Net,%20The@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Net,%20The%20(1995)|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|1|0|0
+Strange%20Days@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Strange%20Days%20(1995)|0|1|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0
+To%20Wong%20Foo,%20Thanks%20for%20Everything!%20Julie%20Newmar@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?To%20Wong%20Foo,%20Thanks%20for%20Everything!%20Julie%20Newmar%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Billy%20Madison@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Billy%20Madison%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
 Clerks@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Clerks%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
 Disclosure@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Disclosure%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
-Dolores Claiborne@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Dolores%20Claiborne%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
-Eat Drink Man Woman@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Yinshi%20Nan%20Nu%20(1994)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
+Dolores%20Claiborne@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Dolores%20Claiborne%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
+Eat%20Drink%20Man%20Woman@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Yinshi%20Nan%20Nu%20(1994)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
 Exotica@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Exotica%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Ed Wood@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Ed%20Wood%20(1994)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
-Hoop Dreams@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Hoop%20Dreams%20(1994)|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0
+Ed%20Wood@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Ed%20Wood%20(1994)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
+Hoop%20Dreams@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Hoop%20Dreams%20(1994)|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0
 I.Q.@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?I.Q.%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
-Star Wars@(1977)|01-Jan-1977||http://us.imdb.com/M/title-exact?Star%20Wars%20(1977)|0|1|1|0|0|0|0|0|0|0|0|0|0|0|1|1|0|1|0
-Legends of the Fall@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Legends%20of%20the%20Fall%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|1|1
-Madness of King George, The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Madness%20of%20King%20George,%20The%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Natural Born Killers@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Natural%20Born%20Killers%20(1994)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0
+Star%20Wars@(1977)|01-Jan-1977||http://us.imdb.com/M/title-exact?Star%20Wars%20(1977)|0|1|1|0|0|0|0|0|0|0|0|0|0|0|1|1|0|1|0
+Legends%20of%20the%20Fall@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Legends%20of%20the%20Fall%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|1|0|0|1|1
+Madness%20of%20King%20George,%20The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Madness%20of%20King%20George,%20The%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Natural%20Born%20Killers@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Natural%20Born%20Killers%20(1994)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0
 Outbreak@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?Outbreak%20(1995)|0|1|0|0|0|0|0|0|1|0|0|0|0|0|0|0|1|0|0
-Professional, The@(1994)|01-Jan-1994||http://us.imdb.com/Title?L%E9on+(1994)|0|0|0|0|0|0|1|0|1|0|0|0|0|0|1|0|1|0|0
-Pulp Fiction@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Pulp%20Fiction%20(1994)|0|0|0|0|0|0|1|0|1|0|0|0|0|0|0|0|0|0|0
+Professional,%20The@(1994)|01-Jan-1994||http://us.imdb.com/Title?L%E9on+(1994)|0|0|0|0|0|0|1|0|1|0|0|0|0|0|1|0|1|0|0
+Pulp%20Fiction@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Pulp%20Fiction%20(1994)|0|0|0|0|0|0|1|0|1|0|0|0|0|0|0|0|0|0|0
 Priest@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Priest%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Quiz Show@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Quiz%20Show%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Three Colors: Red@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Trzy%20kolory:%20Czerwony%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Three Colors: Blue@(1993)|01-Jan-1993||http://us.imdb.com/M/title-exact?Trzy%20kolory:%20Niebieski%20(1993)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-Three Colors: White@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Trzy%20kolory:%20Bialy%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Quiz%20Show@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Quiz%20Show%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Three%20Colors:%20Red@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Trzy%20kolory:%20Czerwony%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Three%20Colors:%20Blue@(1993)|01-Jan-1993||http://us.imdb.com/M/title-exact?Trzy%20kolory:%20Niebieski%20(1993)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+Three%20Colors:%20White@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Trzy%20kolory:%20Bialy%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
 Stargate@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Stargate%20(1994)|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|0
-Santa Clause, The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Santa%20Clause,%20The%20(1994)|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0
-Shawshank Redemption, The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Shawshank%20Redemption,%20The%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
-What's Eating Gilbert Grape@(1993)|01-Jan-1993||http://us.imdb.com/M/title-exact?What's%20Eating%20Gilbert%20Grape%20(1993)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
-While You Were Sleeping@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?While%20You%20Were%20Sleeping%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
-Ace Ventura: Pet Detective@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Ace%20Ventura:%20Pet%20Detective%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
-Crow, The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Crow,%20The%20(1994)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|1|0|1|0|0
-Forrest Gump@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Forrest%20Gump%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|1|0
-Four Weddings and a Funeral@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Four%20Weddings%20and%20a%20Funeral%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
-Lion King, The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Lion%20King,%20The%20(1994)|0|0|0|1|1|0|0|0|0|0|0|0|1|0|0|0|0|0|0
-Mask, The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Mask,%20The%20(1994)|0|0|0|0|0|1|1|0|0|1|0|0|0|0|0|0|0|0|0
+Santa%20Clause,%20The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Santa%20Clause,%20The%20(1994)|0|0|0|0|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Shawshank%20Redemption,%20The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Shawshank%20Redemption,%20The%20(1994)|0|0|0|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0
+What's%20Eating%20Gilbert%20Grape@(1993)|01-Jan-1993||http://us.imdb.com/M/title-exact?What's%20Eating%20Gilbert%20Grape%20(1993)|0|0|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
+While%20You%20Were%20Sleeping@(1995)|01-Jan-1995||http://us.imdb.com/M/title-exact?While%20You%20Were%20Sleeping%20(1995)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
+Ace%20Ventura:%20Pet%20Detective@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Ace%20Ventura:%20Pet%20Detective%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|0
+Crow,%20The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Crow,%20The%20(1994)|0|1|0|0|0|0|0|0|0|0|0|0|0|0|1|0|1|0|0
+Forrest%20Gump@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Forrest%20Gump%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|1|0
+Four%20Weddings%20and%20a%20Funeral@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Four%20Weddings%20and%20a%20Funeral%20(1994)|0|0|0|0|0|1|0|0|0|0|0|0|0|0|1|0|0|0|0
+Lion%20King,%20The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Lion%20King,%20The%20(1994)|0|0|0|1|1|0|0|0|0|0|0|0|1|0|0|0|0|0|0
+Mask,%20The@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Mask,%20The%20(1994)|0|0|0|0|0|1|1|0|0|1|0|0|0|0|0|0|0|0|0
 Maverick@(1994)|01-Jan-1994||http://us.imdb.com/M/title-exact?Maverick%20(1994)|0|1|0|0|0|1|0|0|0|0|0|0|0|0|0|0|0|0|1
-Faster Pussycat! Kill! Kill!@(1965)|01-Jan-1965||http://us.imdb.com/M/title-exact?Faster%20Pussycat!%20Kill!%20Kill!%20(1965)|0|1|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
-Brother Minister: The Assassination of Malcolm X@(1994)|01-Jan-1994||
+Faster%20Pussycat!%20Kill!%20Kill!@(1965)|01-Jan-1965||http://us.imdb.com/M/title-exact?Faster%20Pussycat!%20Kill!%20Kill!%20(1965)|0|1|0|0|0|1|0|0|1|0|0|0|0|0|0|0|0|0|0
+Brother%20Minister:%20The%20Assassination%20of%20Malcolm%20X@(1994)|01-Jan-1994||
