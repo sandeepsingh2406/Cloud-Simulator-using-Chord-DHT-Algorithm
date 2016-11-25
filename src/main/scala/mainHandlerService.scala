@@ -28,7 +28,7 @@ object mainHandlerService {
 
   def main(args: Array[String]): Unit = {
 
-
+//Create an object of the below service class for testing
     val inst: Service = new Service()
     inst.method(new Array[String](5))
   }
@@ -36,10 +36,9 @@ object mainHandlerService {
 
 class Service() {
 
-
+//Initiate a logger
   val logger = Logger("mainHandlerService Class")
 
-  //  val MasterActor = context.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
   def method(args: Array[String]): Unit = {
 
 
@@ -56,7 +55,13 @@ class Service() {
       val route =
         path("") {
           akka.http.scaladsl.server.Directives.get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Welcome to the Cloud Simulator</h1>"))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Welcome to the Cloud Simulator</h1><br><br>" +
+              "<a href=\"http://127.0.0.1:8080/?insertNode=0\">http://127.0.0.1:8080/?insertNode=0</a><br><br>"+
+              "<a href=\"http://127.0.0.1:8080/?nodeLeave=0\">http://127.0.0.1:8080/?nodeLeave=0</a><br><br>"+
+              "<a href=\"http://127.0.0.1:8080/?getMovie=moviename\">http://127.0.0.1:8080/?getMovie=moviename</a><br><br>"+
+              "<a href=\"http://127.0.0.1:8080/?putMovie=moviename&movieDetails=details\">http://127.0.0.1:8080/?putMovie=moviename&movieDetails=details</a><br><br>"+
+              "<a href=\"http://127.0.0.1:8080/?deleteMovie=moviename\">http://127.0.0.1:8080/?deleteMovie=moviename</a><br><br>"))
+            //Main homepage of the web service
           }
         }
     }
@@ -64,7 +69,8 @@ class Service() {
     object Route2 {
       val route =
         parameters('getMovie) { (moviename1) =>
-          //output goes here
+
+          //get movie request
           println("getMovie")
 
           var moviename = moviename1.replaceAll("^\"|\"$", "");
@@ -73,15 +79,17 @@ class Service() {
 
           if (chordMainMethod.ActorJoined.size != 0) {
 
-
+        //if nodes list is not empty
             logger.info("Looking up node which should contain this movie \""+moviename+"\" as per it's HASH")
 
+            //look up node which should contain movie
             val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
 
             logger.info("Response: Node which should contain the movie is \""+node_id+"\"")
             logger.info("Checking if node \""+node_id+"\""+" contains the movie item.")
 
 
+            //look up if that node contains the movie
             val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
 
 
@@ -97,6 +105,8 @@ class Service() {
             }}
 
           else {
+
+            //if node list is empty
             logger.error("Response: Error! Ring does not contain any node currently")
             println("chordMainMethod.ActorJoined.size==0")
             complete(s"Ring does not contain any node currently")
@@ -108,7 +118,7 @@ class Service() {
       object Route3 {
         val route =
           parameters('putMovie, 'movieDetails) { (moviename1, moviedetails1) =>
-            //output goes here
+            //put movie request
             println("putMovie")
             var moviename = moviename1.replaceAll("^\"|\"$", "");
             var moviedetails = moviedetails1.replaceAll("^\"|\"$", "");
@@ -118,11 +128,16 @@ class Service() {
             logger.info("Looking up which node should contain this movie \""+moviename+"\" as per it's HASH")
 
             if (chordMainMethod.ActorJoined.size != 0) {
+
+              //if movie list is not empty
               val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
+              //look up node which should contain movie
 
               logger.info("Response: Node which should contain the movie is \""+node_id+"\"")
 
               println(" Movie should be at " + node_id)
+
+              //look up if that node contains the movie
               val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
               println("LookupListItem response " + response)
 
@@ -131,6 +146,7 @@ class Service() {
               if (response.equals("not found")) {
 
                 println("Inserting ")
+
                 chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
                 logger.info("Response: Movie "+moviename1+" stored at node \""+node_id+"\"")
                 complete(s"Movie <" + moviename + "> inserted at Node " + node_id)
@@ -151,6 +167,7 @@ class Service() {
       }
 
       object Route4 {
+        //different route for insert node
         val route =
           parameters('insertNode) { (nodeId1) =>
             var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt;
@@ -161,8 +178,8 @@ class Service() {
 
             if(nodeId>=chordMainMethod.totalNodes)
               {
-                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+chordMainMethod.totalNodes)
-                complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes)
+                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+chordMainMethod.totalNodes-1)
+                complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes-1)
               }
 
             else {
@@ -210,7 +227,7 @@ class Service() {
       object Route5 {
         val route =
           parameters('nodeLeave) { (nodeId1) =>
-            //output goes here
+            //route for node leaving
             println("nodeLeave")
             var nodeId = nodeId1.replaceAll("^\"|\"$", "").toInt
 
@@ -244,7 +261,7 @@ class Service() {
         val route =
           parameters('deleteMovie) { (moviename1) =>
             //output goes here
-            //output goes here
+            //route for movie deletion
             println("deleteMovie")
             var moviename = moviename1.replaceAll("^\"|\"$", "");
 
@@ -278,11 +295,21 @@ class Service() {
 
           }
       }
+    object Route7 {
+      val route =path("getSnapshot") {
+
+        //request to get snapshot of all node actors
+        println("getting snapshot of entire system")
+
+        complete("done")
+        }
+
+    }
 
 
       //specify different handlers(called routes here) for our web service
       object MainRouter {
-        val routes = Route2.route ~ Route3.route ~ Route4.route ~ Route5.route ~ Route6.route ~ Route1.route
+        val routes = Route2.route ~ Route3.route ~ Route4.route ~ Route5.route ~ Route6.route ~ Route7.route ~ Route1.route
       }
 
       val localhost = InetAddress.getLocalHost
