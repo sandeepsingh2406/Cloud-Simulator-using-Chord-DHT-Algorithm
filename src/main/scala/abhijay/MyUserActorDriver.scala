@@ -75,7 +75,7 @@ object MyUserActorDriver {
     import actorSystem.dispatcher
     val url = "http://127.0.0.1:8080/getSnapshot";
     actorSystem.scheduler.schedule(Duration(5, TimeUnit.SECONDS), Duration(interval*60, TimeUnit.SECONDS)) {
-      logger.info(getURLContent(url));
+      getURLContent(url);
     }
   }
 
