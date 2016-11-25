@@ -1,0 +1,6 @@
+Node joining
+Node leaving
+Transfer of keys
+Snapshot at certain interval provided by user
+Two different logging framework
+Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
