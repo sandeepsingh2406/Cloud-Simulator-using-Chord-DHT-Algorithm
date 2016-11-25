@@ -93,21 +93,26 @@ class Service() {
           var moviename = moviename1.replaceAll("^\"|\"$", "");
           var moviedetails = moviedetails1.replaceAll("^\"|\"$", "");
 
-          val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
-          println("Movie should be at " + node_id)
-          val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
-          println("LookupListItem response " + response)
+          if (chordMainMethod.ActorJoined.size != 0) {
+            val node_id = chordMainMethod.LookupItem(moviename.trim).toInt
+            println("Movie should be at " + node_id)
+            val response = chordMainMethod.LookupListItem(node_id, moviename.trim);
+            println("LookupListItem response " + response)
 
 
-          if (response.equals("not found")) {
+            if (response.equals("not found")) {
 
-            println("Inserting ")
-            chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
-            complete(s"Movie <" + moviename + "> inserted at Node " + node_id)
+              println("Inserting ")
+              chordMainMethod.InsertItem(node_id, moviename.trim, moviedetails.trim)
+              complete(s"Movie <" + moviename + "> inserted at Node " + node_id)
+            }
+            else
+              complete(s"Movie already exists")
           }
-          else
-            complete(s"Movie already exists")
-
+          else {
+            println("chordMainMethod.ActorJoined.size==0")
+            complete(s"Ring does not contain any node currently")
+          }
 
         }
     }
@@ -166,14 +171,14 @@ class Service() {
             complete(s"Ring does not contain any node currently")
           }
           else if (!chordMainMethod.ActorJoined.contains(nodeId)) {
-            complete(s"Ring does not contain node " + nodeId + "\nCurrent Nodes: " + chordMainMethod.ActorJoined)
+            complete(s"Ring does not contain node " + nodeId + "\nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
           }
           else {
 
             //delete method call and key transfer method call
-            //            val abc=chordMainMethod.DeleteNodeInRing(nodeId.toInt)
-            //            println("Back from ring leave:"+abc+", Node: "+nodeId)
-            complete(s"Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined)
+                        val abc=chordMainMethod.DeleteNodeInRing(nodeId.toInt)
+                        println("Back from ring leave:"+abc+", Node: "+nodeId)
+            complete(s"Node " + nodeId + " removed from ring. \nCurrent Nodes: " + chordMainMethod.ActorJoined.sortWith(_ < _))
           }
         }
     }
@@ -195,7 +200,7 @@ class Service() {
               complete(s"Movie not found")
             else {
 
-              //delete movie method
+              val response = chordMainMethod.DeleteKey(node_id, moviename.trim);
               complete(s"Movie found at Node " + node_id + ": " + response +
                 "\nMovie deleted: " + moviename + ": " + response)
             }
