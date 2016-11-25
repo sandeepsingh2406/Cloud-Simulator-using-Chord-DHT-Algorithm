@@ -1,7 +1,11 @@
 package abhijay
 
+import java.io.IOException
+import java.util.concurrent.TimeUnit
+
 import akka.actor.{ActorSystem, Props}
 import grizzled.slf4j.Logger
+
 import scala.concurrent.duration._
 import scala.io.Source
 import scala.util.Random
@@ -64,6 +68,31 @@ object MyUserActorDriver {
       userNode ! deleteRequest(0, maxDeleteRequests);
       Thread.sleep(1000);
     }
+  }
+
+  def takeSnapshots(interval: Int): Unit = {
+    import actorSystem.dispatcher
+    val url = "http://127.0.0.1:8080/getSnapshot";
+    actorSystem.scheduler.schedule(Duration(5, TimeUnit.SECONDS), Duration(interval*60, TimeUnit.SECONDS)) {
+      logger.info(getURLContent(url));
+    }
+  }
+
+  // retrieve contents from URL
+  def getURLContent(url: String) : String = {
+    var result: String = "";
+    try{
+      result = scala.io.Source.fromURL(url).mkString;
+    }
+    catch{
+      case ioe: IOException =>{
+        logger.info("IOException in getURLContent. Ignoring.");
+      }
+      case _: Throwable => {
+        logger.info("Exception in getURLContent. Ignoring.");
+      }
+    }
+    return result;
   }
 
   // add all read movies in cloud simulator
