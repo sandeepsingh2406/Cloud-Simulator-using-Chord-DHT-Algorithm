@@ -7,9 +7,11 @@ import scala.concurrent.Await
 
 /**
   * Created by kruti on 11/25/2016.
+  * This file contains Unit Test cases for testing ChordAlgorithm.scala functions.
   */
 class chordMainMethodTest extends FunSuite {
 
+  /* Intitial set of intialization for activating the master actor and create the actors for the nodes required in the system */
   implicit val timeout = Timeout(100 seconds)
 
   val Master = chordMainMethod.system.actorOf(Props(new ChordMainActor(8,1,1,chordMainMethod.system)), name = "MainActor")
