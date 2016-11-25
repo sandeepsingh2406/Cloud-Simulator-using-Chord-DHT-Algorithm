@@ -4,7 +4,6 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props, _}
 import akka.pattern.ask
 import akka.util.Timeout
 
-import scala.collection.immutable.HashMap
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -297,8 +296,8 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         orignalSender ! "not found"
       }
       else{
-        println("Item found: "+itemString+" at node: "+nodeIndex+" with value: "+itemExists.toString)
-        orignalSender ! itemExists.toString
+        println("Item found: "+itemString+" at node: "+nodeIndex+" with value: "+itemExists.get.toString)
+        orignalSender ! itemExists.get.toString
       }
     }
 
