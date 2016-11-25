@@ -361,15 +361,16 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
     }
     case UpdateItemsList(succNodeIndex : Int, newListItems : scala.collection.mutable.HashMap[String, String]) => {
       val originalSender = sender()
-      println("Initial set of keys with successor node: "+succNodeIndex+ " value: "+this.listOfItems.toString())
+      println("Initial set of keys with successor node: "+succNodeIndex+ " value: "+this.listOfItems)
       println("New keys to be inserted : "+newListItems.toString())
       var tempName : String = ""
       var tempDetail : String = ""
 
-      for((tempName, tempDetail) <- newListItems){
+      for((tempName, tempDetail) <- newListItems)
+      {
         this.listOfItems += (tempName -> tempDetail)
       }
-      println("After updating set of keys with node: "+succNodeIndex+ " value: "+this.listOfItems.toString())
+      println("After updating set of keys with node: "+succNodeIndex+ " value: "+this.listOfItems)
       originalSender ! "done"
     }
 
@@ -415,7 +416,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
       val tempSucc = this.successor
       val tempPred = this.predecessor
-      if(tempSucc != nodeIndex && tempPred != tempPred)
+      if(tempSucc != nodeIndex && tempPred != -1)
       {
         /* transfer the keys to the nodes successor */
         println("call transfer keys to add the list of items in current node to its successor")
@@ -449,11 +450,22 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       originalSender ! "Leaving node index: "+nodeIndex+" done and updated all other"
     }
 
+    case "ScheduleStabilization" => {
+      val tempSystem = chordMainMethod.system
+      for(i <- 0 until chordMainMethod.ActorJoined.length)
+      {
+        val actorRef = Await.result(context.actorSelection("akka://ChordProtocolHW4/user/node_" + chordMainMethod.ActorJoined(i).toString).resolveOne()(20 seconds), 20 seconds)
+
+        tempSystem.scheduler.schedule(60 seconds , 60 seconds,actorRef,Stabilize(chordMainMethod.ActorJoined(i)) )
+      }
+
+    }
+
   }
 
   def transferKeys(currNodeIndex: Int, successorNodeIndex : Int) :Unit ={
     var tempListItems = this.listOfItems
-    var fetchRes : Int = -1
+
     if(currNodeIndex != successorNodeIndex)
     {
       println("Transfer keys for node: "+currNodeIndex+" to its successor: "+successorNodeIndex)
@@ -461,7 +473,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
       val futureSucc = tempActor ? UpdateItemsList(successorNodeIndex, tempListItems)
 
-      fetchRes = Await.result(futureSucc, timeout.duration).asInstanceOf[Int]
+      println(Await.result(futureSucc, timeout.duration).asInstanceOf[String])
     }
 
   }
@@ -476,7 +488,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
       val futurePred = tempActor ? SetPredecessor(currNodePred)
 
-      fetchRes = Await.result(futurePred, timeout.duration).asInstanceOf[Int]
+      println(Await.result(futurePred, timeout.duration).asInstanceOf[String])
     }
 
   }
@@ -491,7 +503,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
       val futurePred = tempActor ? SetSuccessor(currNodeSucc)
 
-      fetchRes = Await.result(futurePred, timeout.duration).asInstanceOf[Int]
+      println(Await.result(futurePred, timeout.duration).asInstanceOf[String])
     }
 
   }
