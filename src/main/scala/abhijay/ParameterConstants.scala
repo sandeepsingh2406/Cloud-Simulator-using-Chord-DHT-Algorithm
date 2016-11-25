@@ -12,6 +12,8 @@ object ParameterConstants {
   var numberOfUsers: Int = 10;
   var movieDatabaseFile = "movies.txt";
   // simulation duration
-  val duration = 15;
-
+  var duration = 15;
+  var ratio = "4:1"
+  var minRequests = 0;
+  var maxRequests = 15;
 }
