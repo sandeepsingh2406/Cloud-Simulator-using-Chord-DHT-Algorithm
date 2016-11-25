@@ -52,6 +52,8 @@ case class SetPredecessor(newPred : Int)
 
 case class SetSuccessor(newSucc : Int)
 
+case class DeleteKeyInNode(nodeIndex : Int, itemName : String)
+
 class ChordMainActor(TotalNodes: Int ,SimulationDuration: Int, SimluationMark : Int,ChordActorSys: ActorSystem) extends Actor
 with ActorLogging {
 
@@ -64,8 +66,6 @@ with ActorLogging {
 
     case "startProcess" => {
       val originalSender = sender
-
-      var timestamp = System.currentTimeMillis()
 
       println("In Start Process")
       println("Master Node has been Initiated")
@@ -90,10 +90,7 @@ with ActorLogging {
         val workerNodes = ChordActorSys.actorOf(Props(new CloudNodeActor(NodeArrayActors(i),TotalNodes, activenodes, SimulationDuration, SimluationMark, i, self)), name = "node_" + i.toString)
         val futureWorker = workerNodes ? "intiateEachNode"
         println(Await.result(futureWorker, timeout.duration).asInstanceOf[String])
-        log.info("Time taken to instatiate node: node_"+i.toString+" is: "+ (System.currentTimeMillis() - timestamp))
       }
-
-      log.info("Time taken to instantiate : "+TotalNodes.toString+" nodes is: "+ (System.currentTimeMillis() - timestamp))
 
       originalSender ! "done"
 
@@ -400,7 +397,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
       orignalSender ! tempNode
     }
 
-    case FindSuccessor(fingerNodeValue : String ,currActorNodeIndex: Int, requestOrigin : String) =>{
+    case FindSuccessor(fingerNodeValue : String ,currActorNodeIndex: Int, requestOrigin : String) => {
       val orignalSender = sender
       val tempSuccVal = find_successor(fingerNodeValue,currActorNodeIndex,requestOrigin)
       orignalSender ! tempSuccVal
@@ -437,6 +434,13 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         this.listOfItems.clear()
         println("Current active nodes in system: "+chordMainMethod.ActorJoined)
       }
+      else{
+        this.predecessor = -1
+        this.successor = -1
+        this.isActiveNode = -1
+        chordMainMethod.ActorJoined -= nodeIndex
+        this.listOfItems.clear()
+      }
 
       for(i <- 0 until chordMainMethod.ActorJoined.length)
       {
@@ -447,10 +451,21 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
 
         println(Await.result(futureLocateSucc, timeout.duration).asInstanceOf[String])
       }
-      originalSender ! "Leaving node index: "+nodeIndex+" done and updated all other"
+      originalSender ! "Leaving node index: "+nodeIndex+" done and updated all other nodes"
     }
 
-    case "ScheduleStabilization" => {
+    case DeleteKeyInNode(nodeIndex : Int, itemName : String) =>
+    {
+      val originalSender = sender
+      println("Origianl list of items at node: "+nodeIndex+" values: "+this.listOfItems)
+      this.listOfItems -= itemName
+
+      println("Updated list of items at node: "+nodeIndex+" values: "+this.listOfItems +" after deleting item: "+itemName)
+
+      originalSender ! "Deletion of "+itemName+" done at node: "+nodeIndex
+    }
+
+  /*  case "ScheduleStabilization" => {
       val tempSystem = chordMainMethod.system
       for(i <- 0 until chordMainMethod.ActorJoined.length)
       {
@@ -459,7 +474,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         tempSystem.scheduler.schedule(60 seconds , 60 seconds,actorRef,Stabilize(chordMainMethod.ActorJoined(i)) )
       }
 
-    }
+    }*/
 
   }
 
@@ -787,9 +802,6 @@ object chordMainMethod {
 
   def main(args: Array[String])
   {
-
-    println("Input Arguements: No of User, No of nodes, min and max msgs (by each user), simulation duraion , time mark for simulation, items list,  ")
-
     println("Enter total nodes in system: ")
     totalNodes = scala.io.StdIn.readInt()
 
@@ -806,8 +818,6 @@ object chordMainMethod {
 
     val inst: Service = new Service()
     inst.method(new Array[String](5))
-
-
 
   }
 
@@ -891,6 +901,18 @@ object chordMainMethod {
     val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
     //println(actorRef.pathString)
     val future = actorRef ? DeleteNode(nodeIndex)
+
+    println(Await.result(future, timeout.duration).asInstanceOf[String])
+
+    return "done"
+  }
+
+  def DeleteKey(nodeIndex:Int, itemName : String) :String ={
+    println("Delete movie: "+itemName+" present at node: "+nodeIndex)
+
+    val actorRef=system.actorSelection("akka://ChordProtocolHW4/user/node_"+nodeIndex.toString)
+    //println(actorRef.pathString)
+    val future = actorRef ? DeleteKeyInNode(nodeIndex, itemName.toLowerCase())
 
     println(Await.result(future, timeout.duration).asInstanceOf[String])
 
