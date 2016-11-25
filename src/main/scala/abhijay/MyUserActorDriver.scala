@@ -61,8 +61,7 @@ object MyUserActorDriver {
     val simulationDuration = duration.seconds.fromNow;
     val random = Random;
     for(i <- 0 until numberOfUsers){
-      val id = random.nextInt(numberOfUsers);
-      val userNode = actorSystem.actorSelection(ParameterConstants.userActorNamePrefix + ParameterConstants.userNamePrefix + id);
+      val userNode = actorSystem.actorSelection(ParameterConstants.userActorNamePrefix + ParameterConstants.userNamePrefix + i);
       logger.info("startSimulation() " + userNode.pathString);
       userNode ! writeRequest(0, maxWriteRequests);
       userNode ! readRequest(0, maxReadRequests);
