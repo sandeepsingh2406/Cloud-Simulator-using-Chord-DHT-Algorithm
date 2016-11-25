@@ -882,9 +882,13 @@ object chordMainMethod {
     val futureMaster = Master ? "startProcess"
     println(Await.result(futureMaster, timeout.duration).asInstanceOf[String]+" instantiating chord simulator")
 
-    val path1 = "CloudSimulator.log"
+    var path1 = "CloudSimulator.log"
     new File(path1).delete()
     val file = new File(path1).createNewFile()
+
+    path1 = "ChordSnapshot.txt"
+    new File(path1).delete()
+    new File(path1).createNewFile()
 
     val inst: Service = new Service()
     inst.method(new Array[String](5))
