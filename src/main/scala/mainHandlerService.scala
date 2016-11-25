@@ -178,8 +178,8 @@ class Service() {
 
             if(nodeId>=chordMainMethod.totalNodes)
               {
-                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+chordMainMethod.totalNodes-1)
-                complete(s"Please enter a value between 0 and "+chordMainMethod.totalNodes-1)
+                logger.error("Response: Error! Node " + nodeId+" is not in limit. Should be between 0 & "+(chordMainMethod.totalNodes-1))
+                complete(s"Please enter a value between 0 and "+(chordMainMethod.totalNodes-1))
               }
 
             else {
