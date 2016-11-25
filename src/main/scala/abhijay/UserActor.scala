@@ -18,11 +18,14 @@ case class putMovieCloud(movieName: String, movieDetails: String)
 case class deleteMovie(movieName: String)
 case class readRequest(min: Int, max: Int)
 case class writeRequest(min: Int, max: Int)
+case class deleteRequest(min: Int, max: Int)
 
 class UserActor(userId: Int) extends Actor {
 
   val logger = Logger("UserActor" + userId);
   val URL = "http://127.0.0.1:8080/";
+  val listOfMovies = MyUserActorDriver.readFile(ParameterConstants.movieDatabaseFile);
+  val numberOfMovies = listOfMovies.length;
 
   def getStartTime(): Int={
 
@@ -53,15 +56,17 @@ class UserActor(userId: Int) extends Actor {
     }
 
     case deleteMovie(movieName) => {
-
+      var url = URL + "?deleteMovie=" + movieName;
+      var result = getURLContent(url);
+      logger.info("User" + userId + "; deleteMovie Result: " + result);
     }
 
     case readRequest(min, max) => {
       val random = Random;
       val startTime = getStartTime;
-      logger.info(startTime);
-      val listOfMovies = MyUserActorDriver.readFile(ParameterConstants.movieDatabaseFile);
-      val numberOfMovies = listOfMovies.length;
+      logger.info("case: readRequest; startTime=" + startTime);
+//      val listOfMovies = MyUserActorDriver.readFile(ParameterConstants.movieDatabaseFile);
+//      val numberOfMovies = listOfMovies.length;
       for(i <- min until max+1){
         val id = random.nextInt(numberOfMovies);
         self ! getMovie(listOfMovies(id).split("\\@")(0));
@@ -73,13 +78,27 @@ class UserActor(userId: Int) extends Actor {
       val random = Random;
       val startTime = getStartTime;
       logger.info("case: writeRequest; startTime=" + startTime);
-      val listOfMovies = MyUserActorDriver.readFile(ParameterConstants.movieDatabaseFile);
-      val numberOfMovies = listOfMovies.length;
+//      val listOfMovies = MyUserActorDriver.readFile(ParameterConstants.movieDatabaseFile);
       for(i <- min until max+1){
         val id = random.nextInt(numberOfMovies);
         val movieTokens = listOfMovies(id).split("\\@");
         logger.info("Adding movie: " + movieTokens(0));
         putMovieMethod(movieTokens(0), movieTokens(1));
+        Thread.sleep(((60/max).ceil.toLong)*1000);
+      }
+    }
+
+    case deleteRequest(min, max) => {
+      val random = Random;
+      val startTime = getStartTime;
+      logger.info("case: deleteRequest; startTime=" + startTime);
+//      val listOfMovies = MyUserActorDriver.readFile(ParameterConstants.movieDatabaseFile);
+//      val numberOfMovies = listOfMovies.length;
+      for(i <- min until max+1){
+        val id = random.nextInt(numberOfMovies);
+        val movieTokens = listOfMovies(id).split("\\@");
+        logger.info("Adding movie: " + movieTokens(0));
+        deleteMovieMethod(movieTokens(0));
         Thread.sleep(((60/max).ceil.toLong)*1000);
       }
     }
@@ -93,10 +112,10 @@ class UserActor(userId: Int) extends Actor {
     }
     catch{
       case ioe: IOException =>{
-        logger.info("IOException, ignoring");
+        logger.info("IOException in getURLContent. Ignoring.");
       }
       case _: Throwable => {
-        logger.info("Exception, ignoring");
+        logger.info("Exception in getURLContent. Ignoring.");
       }
     }
     return result;
@@ -125,5 +144,11 @@ class UserActor(userId: Int) extends Actor {
     var url = URL + "?putMovie=" + movieName + "&movieDetails=" + movieDetails;
     var result = getURLContent(url);
     logger.info("User" + userId + "; putMovie Result: " + result);
+  }
+
+  def deleteMovieMethod(movieName: String): Unit ={
+    var url = URL + "?deleteMovie=" + movieName;
+    var result = getURLContent(url);
+    logger.info("User" + userId + "; deleteMovie Result: " + result);
   }
 }
