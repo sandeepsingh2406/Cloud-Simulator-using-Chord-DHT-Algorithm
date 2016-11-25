@@ -7,10 +7,15 @@ Project Members are: Abhijay Patne , Kruti Sharma, Sandeep Singh
 Apart from the basic requirements of the Chord Simulator, we have also implemented:
 
 Node joining
+
 Node leaving
+
 Transfer of keys
+
 Snapshot at certain interval provided by user
+
 Two different logging framework
+
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
 
 Please find details of these bonus implementations later in the readMe.
@@ -79,12 +84,14 @@ Addtionally, the web service also take a request to get a snapshot(localhost:808
 <Description goes here>
 	
 **serviceTest.scala**: This testcase initiates the web service and makes rest calls to the web service and check its response. 
+
 If the response matches, these test cases pass.
 
 
 **Note:** While running the scala test programs for the first time, IntelliJ might show the error, "Module not defined". You can go to Run->Edit Configurations->Use classpath and SDK of module and specify the module there. And then rerun the test program.
 
 **Note:** Sometimes IntelliJ automatically changes the test library for running the test cases. That might cause syntactical errors in our test programs. You can respecify the test library by removing the scala test library specified in build.sbt, and then putting it back again. 
+
 The following scalatest library has been used:
 
 libraryDependencies += "org.scalatest"  %% "scalatest"   % "2.2.4" % Test 
@@ -98,15 +105,19 @@ libraryDependencies += "org.scalatest"  %% "scalatest"   % "2.2.4" % Test
 1. Clone the repo and import the project into IntelliJ using SBT.
 
 2. Edit the Run Configurations to add the Command Line Parameters:
+
 These are in the order: noOfUsers totalNodes minRequests maxRequests simulationDuration snapshotMark moviefilePath readWriteRatio
 
 For example:
 5 8 0 20 10 2 "movies.txt" "4:1"
 
 3. Run chordMainMethod
+
 This does everything from starting the chord system, web service, and actor system, along with all the actor and snapshot simulations
 
-**Note:** While running the scala programs for the first time, IntelliJ might show the error, "Module not defined". You can go to Run->Edit Configurations->Use classpath of module and specify the module there. And then rerun the program.
+**Note:** While running the scala programs for the first time, IntelliJ might show the error, "Module not defined". You can go to 
+
+Run->Edit Configurations->Use classpath of module and specify the module there. And then rerun the program.
 
 **OPTION 2(Run web service on the cloud):**
 
@@ -153,8 +164,11 @@ Transfer of keys
 Snapshot at certain interval provided by user
 
 Two different logging framework: 
+
 SLF4J has been used by the web service class to log input requests and their responses.
+
 Dependency can be found in build.sbt and its implementation is in mainHandlerService.scala
+
 <Write about Akka actors>
 
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
