@@ -15,9 +15,9 @@ Apart from the basic requirements of the Cloud Simulator, we have also implement
 
 **Snapshot**:
 
-1] Scheduled at certain interval, provided by user as command line argument 
+**1]** Scheduled at certain interval, provided by user as command line argument 
 
-2] Take instant snapshot from WebService which is rendered in browser, can be viewed at http://localhost:8080/getSnapshot or can be downloaded directly using curl http://localhost:8080/getSnapshot
+**2]** Take instant snapshot from WebService which is rendered in browser, can be viewed at http://localhost:8080/getSnapshot or can be downloaded directly using curl http://localhost:8080/getSnapshot
 
 Use of two different logging frameworks, **SLF4J** and **ActorLogging** for node and user simulation respectively.
 
