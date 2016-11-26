@@ -12,14 +12,16 @@ Node leaving
 
 Transfer of keys
 
-Snapshot: 1] Scheduled at certain interval, provided by user as command line argument 
+**Snapshot**: 1] Scheduled at certain interval, provided by user as command line argument 
           2] Take instant snapshot from WebService which is rendered in browser, can be viewed at http://localhost:8080/getSnapshot or can be downloaded directly using curl http://localhost:8080/getSnapshot
 
 Use of two different logging frameworks, SLF4J and ActorLogging for node and user simulation respectively.
 
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
 
-WebService to handle all the requests which the cloud simulator is capable of serving. 
+Load tested our simulator to simulate **5000 nodes** and **500 users**. We increased heap memory size from 512m to **4096m** for this execution
+
+**WebService** to handle all the requests which the cloud simulator is capable of serving. 
 
 Please find details of these bonus implementations later in the README.
 
@@ -250,15 +252,19 @@ Run->Edit Configurations->Use classpath of module and specify the module there. 
 
   5. Snapshot at certain interval provided by user : this method allows us to output the current state of system that is the number of nodes added in the ring, each of the nodes successor, predecessor, their list items and their finger table. This method is ** SnapshotActors ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
 
-Two different logging framework: 
+   6. Two different logging framework: 
+    SLF4J has been used by the web service class to log input requests and their responses.
+    Dependency can be found in build.sbt and its implementation is in mainHandlerService.scala
 
-SLF4J has been used by the web service class to log input requests and their responses.
+     ActorLogging was used to check how much time it required to activate each node in the ring when create ring or insert node in ring are called. Different time logs are taken to check how much time is taken by different node actors to perform different operations.
 
-Dependency can be found in build.sbt and its implementation is in mainHandlerService.scala
-
-ActorLogging was used to check how much time it required to activate each node in the ring when create ring or insert node in ring are called. Different time logs are taken to check how much time is taken by different node actors to perform different operations.
-
-Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
+   7. Automated concurrent user request simulation which includes addition, deletion and retrieval of movies:
+   UserActor.scala contains all the cases and method definitions used to query the WebService to add/lookup/delete movie details.
+   MyUserActorDriver.scala initiates all the user actors and start the multiple read/write/delete requests in parallel. All the requests are sent to actors according to the readWrite ratio, minimum, maximum requests in a minute provided as command line arguments. 
+   
+   8. Load testing:
+   We have run this simulator with maximum 5000 nodes and 500 users present in the system. We had to increase the default heap memory size from 512m to 4096m using -Xmx4096m option in idea.exe.vmoptions file.
+   loadTest() method present in MyUserActorDriver.scala performs this action.
 
 
 
