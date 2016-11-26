@@ -48,10 +48,25 @@ object MyUserActorDriver {
     logger.info(maxReadRequests)
     logger.info(maxWriteRequests)
 
+//    loadTest(5000);
+
     // instantiate all the actors
     instantiateActors(ParameterConstants.numberOfUsers, actorSystem);
     startSimulation(ParameterConstants.duration, ParameterConstants.numberOfUsers, maxReadRequests, maxWriteRequests, divider);
     takeSnapshots(ParameterConstants.interval);
+
+
+  }
+
+  // We used this method to load test our cloud simulator. Input to the method is number of nodes in the system.
+  def loadTest(maxNodes: Int): Unit ={
+    for(i <- 0 until (maxNodes/10)){
+      val random = Random;
+      val id = random.nextInt(maxNodes);
+      val url = "http://127.0.0.1:8080/?insertNode=" + id;
+      println(url);
+      getURLContent(url);
+    }
   }
 
   def startSimulation(duration: Int, numberOfUsers: Int,
