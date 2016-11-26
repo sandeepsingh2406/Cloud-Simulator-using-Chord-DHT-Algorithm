@@ -143,10 +143,24 @@ Once a request is received, the request if forwarded to the chord actor system, 
 Addtionally, the web service also take a request to get a snapshot(localhost:8080/getSnapshot) of the entire node system. The entire snapshot is given as response to the rest call, as well as written to a file.
 
 
-**3. User actor classes.scala**
+**3. UserActor.scala**
 
-<Description goes here (Abhijay)>
+deleteMovie() case, deleteMovieMethod() method: given movie name, delete the movie from the simulator
 
+getMovie() case, getMovieMethod() method: given movie name, retrieve movie details and its location in the simulator
+
+putMovie() case, putMovieMethod(): given movie name and details, store it on the appropriate node in the simulator
+
+readRequest(), writeRequest(), deleteRequest(): given minimum and maximum requests per minute, these cases schedule above request at certain interval. (e.g. min=0 and max=10 then each request will be scheduled after 60/10=6 seconds)
+
+   **4. MyUserActorDriver.scala**
+   
+   This is the driver program for user actor simulation.
+   takeSnapshots(): take simulator snapshots at given intervals provided as input parameter.
+   instantiateActors(): start all the actors, using number of actors as input.
+   startSimulation(): start concurrent user actor simulation to servie various read/write/delete requests
+   loadTest(): To perform the extensive load test of the simulator 
+   
 
 ---------------------------------------------------------------------------------
 			
