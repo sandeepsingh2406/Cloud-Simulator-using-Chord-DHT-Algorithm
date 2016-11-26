@@ -1,10 +1,10 @@
-This repo contains the HW4 project i.e. **Cloud Simulator for Chord Algorithm** based on Akka Actors.
+This repo contains the HW4 project i.e. **Cloud Simulator using Chord DHT Algorithm** based on Akka Actors.
 
 Project Members are: Abhijay Patne , Kruti Sharma, Sandeep Singh
 
 -------------------------------------------------------------------------------------------------------
 **Highlights and features of the application:**
-Apart from the basic requirements of the Chord Simulator, we have also implemented:
+Apart from the basic requirements of the Cloud Simulator, we have also implemented:
 
 Node joining
 
@@ -12,13 +12,16 @@ Node leaving
 
 Transfer of keys
 
-Snapshot at certain interval provided by user
+Snapshot: 1] Scheduled at certain interval, provided by user as command line argument 
+          2] Take instant snapshot from WebService which is rendered in browser, can be viewed at http://localhost:8080/getSnapshot or can be downloaded directly using curl http://localhost:8080/getSnapshot
 
-Two different logging framework
+Use of two different logging frameworks, SLF4J and ActorLogging for node and user simulation respectively.
 
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
 
-Please find details of these bonus implementations later in the readMe.
+WebService to handle all the requests which the cloud simulator is capable of serving. 
+
+Please find details of these bonus implementations later in the README.
 
 -------------------------------------------------------------------------------------------------------
 
@@ -28,19 +31,19 @@ Below is a work flow of this project, followed by description of the project str
 
 1. The user enters all input parameters through command line. (Described later)
 
-2. The Chord actor system, web service(through Akka HTTP), and user actor system are started. Users are created in accordance to some of the input parameters.
+2. The Chord actor system, web service(through Akka HTTP), and user actor system are started. Users are created according to the input parameters, number of users (1st parameter).
 
-3. The web service is listening on http://localhost:8080 for all kinds of requests-> add user, remove user, add item, lookup item and delete item.
+3. The web service is listening on **http://localhost:8080** for all kinds of requests-> add node, remove node, add item, lookup item and delete item. Syntax and examples for all supported requests are mentioned on the homepage.
 
-3. Initially, a few random nodes are added to create the ring and add nodes to the ring, use REST calls to our web service.
+3. Initially, a few random nodes are added to create the ring and add nodes to the ring, you can use REST calls to our web service to add or remove more nodes.
 
-4. After nodes have been added, the user actors, start making Rest calls to our web service to add/delete/lookup movie items.
+4. After nodes have been added, the user actors start making REST calls to our web service to add/delete/lookup movie items with details. We have used movie database from MovieLens dataset (http://grouplens.org/datasets/movielens/100k/)
 
-5. The user actors keep making calls until the duration of simulation(entered initially as command line argument) finishes.
+5. The user actors keep making concurrent add/delete/lookup item calls until the duration of simulation(entered initially as command line argument) finishes.
 
-6. The user actors use Akka logger to log all requests and response. Whereas for the Chord system, the requests/responses are logged through SLF4J.
+6. The user actors use Akka logger (**ActorLogging**) to log all requests and response. Whereas for the Chord system, the requests/responses are logged through **SLF4J**.
  
-7. Snapshots are taken using the Chord system, after a certain time interval as specified by user. The states of all nodes are logged.
+7. **Snapshots** are taken using the Chord system, after a certain time interval as specified by user. The state of all nodes is logged. 
 
 -------------------------------------------------------------------------------------------------------
 
@@ -65,35 +68,35 @@ Scala main classes(/src/main/scala/):
 	### chordMainMethod ###
 	Below are the main functions:
 	
-	* Main() - this function is called when ChordAlgorithm is run. This accepts the input parameter : No of users, Total System, Min Requests/min, 
+	* Main() - this method is called when ChordAlgorithm is run. This accepts the input parameter : No of users, Total System, Min Requests/min, 
 	Max Requests/min, SimulationDuration, Simulation Mark, Items requested (accepts a txt file) and Ratio of Read/Write requests. This main method
 	is responsible for instantiating the ChordMainActor and which in turn instantiates CloudNodeActor. After the instantiation is complete, it 
 	makes a call to the ** mainHandlerService ** to start the web service. After the web service is started, it instantiates the cloud ring with some nodes
 	to create the cloud ring and make few nodes active. After this it activates ** MyUserActorDriver ** which simualates all the users request via the web service.
 	
-	* CreateRingWithNode() - this function is responsible to create the ring for chord with a node. This node is the only node active in the cloud.
+	* CreateRingWithNode() - this method is responsible to create the ring for chord with a node. This node is the only node active in the cloud.
 	
-	* InsertNodeInRing() - this function is responsible to add other nodes in an existing ring. The new node can join the ring on the basis of any active
+	* InsertNodeInRing() - this method is responsible to add other nodes in an existing ring. The new node can join the ring on the basis of any active
 	node present in the ring. When a new node joins it internally performs operation such as transfer of keys (items), stabilize the ring where all nodes 
 	update their finger table.
 	
-	* LookupItem() - this function is responsible to perform FindSuccessor operation for any item that needs to be searched in the active nodes. It 
+	* LookupItem() - this method is responsible to perform FindSuccessor operation for any item that needs to be searched in the active nodes. It 
 	returns a node index at which the item (movie) exists else it responds "not found"
 	
-	* LookupListItem() - this function is responsible to check if an item - movie name exists with an active node in the ring. If the movie exists at the node, 
+	* LookupListItem() - this method is responsible to check if an item - movie name exists with an active node in the ring. If the movie exists at the node, 
 	then it returns the item detail (movie details) else it responds with "not found" message. 
 	
-	* InsertItem() - this function is responsible to insert an item (movie) and its value (movie details) to the node at which it must be present.
+	* InsertItem() - this method is responsible to insert an item (movie) and its value (movie details) to the node at which it must be present.
 	
-	* DeleteNodeInRing() - this function is responsible to deactivate a node that is when a node is leaving the ring along with notifying every other node. 
+	* DeleteNodeInRing() - this method is responsible to deactivate a node that is when a node is leaving the ring along with notifying every other node. 
 	This makes the node as inactive in the cloud ring, notifies its successor and predecessor to update their values, along with transfers all its keys (items)
 	to its successor and update the finger table of all nodes active in the system. If this is the only node active in the ring then the ring is deactivated
 	and all the items are deleted from this node. Now there will be no active nodes in the ring and inserting a node will start from creating a ring.
 	
-	* DeleteKey() - this function is responsible to delete an item (movie) if present at any node. The lookup for the item is already performed and if the 
+	* DeleteKey() - this method is responsible to delete an item (movie) if present at any node. The lookup for the item is already performed and if the 
 	response returns an active node, then deletion of key is performed for that node.
 	
-	* SnapshotActors() - this function is responsible to take snapshots of the system which is stored in ** ChordSnapshot.txt **. The snapshots contains
+	* SnapshotActors() - this method is responsible to take snapshots of the system which is stored in ** ChordSnapshot.txt **. The snapshots contains
 	the active nodes, their successor, predecessor, their list of items and their finger table.
 	
 	### Actors ###
@@ -104,22 +107,22 @@ Scala main classes(/src/main/scala/):
 	* CloudNodeActor - this is the actor represnting each node in the ring. Each actor has its own successor, predecessor, finger table and list of items 
 	it will be storing. The important definitions in this actor are:
 	
-		1. transferKeys() - this function is responsible to transfer keys to the successor node when a node leaves.
+		1. transferKeys() - this method is responsible to transfer keys to the successor node when a node leaves.
 		
-		2. nodeLeaveUpdateSucc() - this function is responsible to update the leaving nodes successor to update its predecessor node.
+		2. nodeLeaveUpdateSucc() - this method is responsible to update the leaving nodes successor to update its predecessor node.
 		
-		3. nodeLeaveUpdatePred() - this function is responsible to update the leaving nodes predecessor to update its successor node.
+		3. nodeLeaveUpdatePred() - this method is responsible to update the leaving nodes predecessor to update its successor node.
 		
-		4. locate_successor() - this function is responsible to iterate through the rows of finger table of the current node and update 
+		4. locate_successor() - this method is responsible to iterate through the rows of finger table of the current node and update 
 		their successor nodes column.
 		
-		5. find_successor() - this function is responsible to find the successor for the current node.
+		5. find_successor() - this method is responsible to find the successor for the current node.
 		
-		6. find_predecessor() - this function is responsible to find the predecessor for the current node.
+		6. find_predecessor() - this method is responsible to find the predecessor for the current node.
 		
-		7. closest_preceding_finger() - this function is responsible to find the closes preceding nodes for a specified node.
+		7. closest_preceding_finger() - this method is responsible to find the closes preceding nodes for a specified node.
 		
-		8. Stabilize() - this function is responsible to update the successor and predecessor for a node. This function is called when a new node joins the ring. This helps in updating the successor and predecessor for all nodes active in the ring. This internally calls notifynode which also along with updating the predecessor transfers the key from the node if required.
+		8. Stabilize() - this method is responsible to update the successor and predecessor for a node. This method is called when a new node joins the ring. This helps in updating the successor and predecessor for all nodes active in the ring. This internally calls notifynode which also along with updating the predecessor transfers the key from the node if required.
 
 
 
@@ -235,17 +238,17 @@ Run->Edit Configurations->Use classpath of module and specify the module there. 
 		
 	
 -------------------------------------------------------------------------------------------------------
-**Bonus Implementations**
+**Bonus Implementations Details**
 
   1. Node joining: This allows a user to add a node in the ring. If there is no node in the ring, then the implementation calls ** CreateRingWithNode **  where the user can specify which node they want to add first in the ring. If the ring has atleast one active node, then the ** InsertNodeInRing** is called which adds the node to the ring on the basis of any active node in the ring. The implementation for these functions is present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test for ** CreateRingWithNode ** is : ** testCreateRingWithNode ** and for ** InsertNodeInRing ** is: ** testInsertNodeInRing **. Both the test cases are present in ** chordMainMethodTest.scala **. To run the test case, run testCreateRingWithNode and then testInsertNodeInRing. The paremeter passed for creating the ring or inserting the node in ring i.e. the node number can be changed to any number between 0 - 7. 
 
-  2. Node leaving : This allows user to specify any node that they want to deactivate from the ring.  The method : ** DeleteNodeInRing ** is called to deactivate a node from the ring. This function is presnt in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case for node leaving is : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala **. To run the test case, please run testCreateRingWithNode and then testDeleteNodeInRing. 
+  2. Node leaving : This allows user to specify any node that they want to deactivate from the ring.  The method : ** DeleteNodeInRing ** is called to deactivate a node from the ring. This method is presnt in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case for node leaving is : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala **. To run the test case, please run testCreateRingWithNode and then testDeleteNodeInRing. 
 
-  3. Transfer of keys : This implementation allows to transfer the keys from one node to other node either when a node is leaving or if a new node is joining then the neighboring nodes can transfer existing keys from their dataset to the newly joined node. This implementation is present in function : ** transferKeys ** in ** ChordAlgorithm.scala ** => ** CloudNodeActor **. This function call happens when a node is leaving, then it will transfer all its keys to its successor. The unit test case : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala ** performs this as an internal operation. When a new node joins : ** addKeys_whennodejoin ** - this operation is performed internally and if the keys needs to updated from one nodes dataset to other they will be transferred. The unit test case : ** testInsertNodeInRing ** in ** chordMainMethodTest.scala ** performs this operation internally.
+  3. Transfer of keys : This implementation allows to transfer the keys from one node to other node either when a node is leaving or if a new node is joining then the neighboring nodes can transfer existing keys from their dataset to the newly joined node. This implementation is present in method : ** transferKeys ** in ** ChordAlgorithm.scala ** => ** CloudNodeActor **. This method call happens when a node is leaving, then it will transfer all its keys to its successor. The unit test case : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala ** performs this as an internal operation. When a new node joins : ** addKeys_whennodejoin ** - this operation is performed internally and if the keys needs to updated from one nodes dataset to other they will be transferred. The unit test case : ** testInsertNodeInRing ** in ** chordMainMethodTest.scala ** performs this operation internally.
 
-  4. Delete Key : This implementation allows to delete an item (if existing) from a nodes dataset. This function is : ** DeleteKey ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case is: ** testDeleteKey ** present in ** chordMainMethodTest.scala **. To run this test case, please run testLookupAndPut and then testDeleteKey.
+  4. Delete Key : This implementation allows to delete an item (if existing) from a nodes dataset. This method is : ** DeleteKey ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case is: ** testDeleteKey ** present in ** chordMainMethodTest.scala **. To run this test case, please run testLookupAndPut and then testDeleteKey.
 
-  5. Snapshot at certain interval provided by user : this function allows us to output the current state of system that is the number of nodes added in the ring, each of the nodes successor, predecessor, their list items and their finger table. This function is ** SnapshotActors ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
+  5. Snapshot at certain interval provided by user : this method allows us to output the current state of system that is the number of nodes added in the ring, each of the nodes successor, predecessor, their list items and their finger table. This method is ** SnapshotActors ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **.
 
 Two different logging framework: 
 
@@ -253,7 +256,7 @@ SLF4J has been used by the web service class to log input requests and their res
 
 Dependency can be found in build.sbt and its implementation is in mainHandlerService.scala
 
-ActorLogging was performed to check how much time it required to activate each node in the ring when create ring or insert node in ring are called. Different time logs are taken to check how much time is taken by different node actors to perform different operations.
+ActorLogging was used to check how much time it required to activate each node in the ring when create ring or insert node in ring are called. Different time logs are taken to check how much time is taken by different node actors to perform different operations.
 
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
 
