@@ -1,25 +1,29 @@
 This repo contains the HW4 project i.e. **Cloud Simulator using Chord DHT Algorithm** based on Akka Actors.
 
-Project Members are: Abhijay Patne , Kruti Sharma, Sandeep Singh
+Project Members are: **Abhijay Patne , Kruti Sharma, Sandeep Singh**
 
 -------------------------------------------------------------------------------------------------------
 **Highlights and features of the application:**
+
 Apart from the basic requirements of the Cloud Simulator, we have also implemented:
 
-Node joining
+**Node joining**
 
-Node leaving
+**Node leaving**
 
-Transfer of keys
+**Transfer of keys**
 
-**Snapshot**: 1] Scheduled at certain interval, provided by user as command line argument 
-          2] Take instant snapshot from WebService which is rendered in browser, can be viewed at http://localhost:8080/getSnapshot or can be downloaded directly using curl http://localhost:8080/getSnapshot
+**Snapshot**:
 
-Use of two different logging frameworks, SLF4J and ActorLogging for node and user simulation respectively.
+1] Scheduled at certain interval, provided by user as command line argument 
+
+2] Take instant snapshot from WebService which is rendered in browser, can be viewed at http://localhost:8080/getSnapshot or can be downloaded directly using curl http://localhost:8080/getSnapshot
+
+Use of two different logging frameworks, **SLF4J** and **ActorLogging** for node and user simulation respectively.
 
 Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
 
-Load tested our simulator to simulate **5000 nodes** and **500 users**. We increased heap memory size from 512m to **4096m** for this execution
+**Load tested our simulator** to simulate **5000 nodes** and **500 users**. We increased heap memory size from 512m to **4096m** for this execution
 
 **WebService** to handle all the requests which the cloud simulator is capable of serving. 
 
@@ -27,7 +31,7 @@ Please find details of these bonus implementations later in the README.
 
 -------------------------------------------------------------------------------------------------------
 
-Below is a work flow of this project, followed by description of the project structure:
+**Below is a work flow of this project, followed by description of the project structure:**
 
 **Project Flow:**
 
@@ -39,7 +43,7 @@ Below is a work flow of this project, followed by description of the project str
 
 3. Initially, a few random nodes are added to create the ring and add nodes to the ring, you can use REST calls to our web service to add or remove more nodes.
 
-4. After nodes have been added, the user actors start making REST calls to our web service to add/delete/lookup movie items with details. We have used movie database from MovieLens dataset (http://grouplens.org/datasets/movielens/100k/)
+4. After nodes have been added, the user actors start making REST calls to our web service to add/delete/lookup movie items with details. **We have used movie database from MovieLens dataset** (http://grouplens.org/datasets/movielens/100k/)
 
 5. The user actors keep making concurrent add/delete/lookup item calls until the duration of simulation(entered initially as command line argument) finishes.
 
@@ -145,21 +149,21 @@ Addtionally, the web service also take a request to get a snapshot(localhost:808
 
 **3. UserActor.scala**
 
-deleteMovie() case, deleteMovieMethod() method: given movie name, delete the movie from the simulator
+**deleteMovie() case, deleteMovieMethod() method:** given movie name, delete the movie from the simulator
 
-getMovie() case, getMovieMethod() method: given movie name, retrieve movie details and its location in the simulator
+**getMovie() case, getMovieMethod() method:** given movie name, retrieve movie details and its location in the simulator
 
-putMovie() case, putMovieMethod(): given movie name and details, store it on the appropriate node in the simulator
+**putMovie() case, putMovieMethod():** given movie name and details, store it on the appropriate node in the simulator
 
-readRequest(), writeRequest(), deleteRequest(): given minimum and maximum requests per minute, these cases schedule above request at certain interval. (e.g. min=0 and max=10 then each request will be scheduled after 60/10=6 seconds)
+**readRequest(), writeRequest(), deleteRequest():** given minimum and maximum requests per minute, these cases schedule above request at certain interval. (e.g. min=0 and max=10 then each request will be scheduled after 60/10=6 seconds)
 
    **4. MyUserActorDriver.scala**
    
    This is the driver program for user actor simulation.
-   takeSnapshots(): take simulator snapshots at given intervals provided as input parameter.
-   instantiateActors(): start all the actors, using number of actors as input.
-   startSimulation(): start concurrent user actor simulation to servie various read/write/delete requests
-   loadTest(): To perform the extensive load test of the simulator 
+   **takeSnapshots():** take simulator snapshots at given intervals provided as input parameter.
+   **instantiateActors():** start all the actors, using number of actors as input.
+   **startSimulation():** start concurrent user actor simulation to servie various read/write/delete requests
+   **loadTest():** To perform the extensive load test of the simulator 
    
 
 ---------------------------------------------------------------------------------
@@ -212,8 +216,9 @@ libraryDependencies += "org.scalatest"  %% "scalatest"   % "2.2.4" % Test
 
 These are in the order: noOfUsers totalNodes minRequests maxRequests simulationDuration snapshotMark moviefilePath readWriteRatio
 
-For example:
-5 8 0 20 5 2 "movies.txt" "4:1"
+         For example:
+
+         5 8 0 20 5 2 "movies.txt" "4:1"
 
 3. Run chordMainMethod
 
@@ -236,7 +241,8 @@ Run->Edit Configurations->Use classpath of module and specify the module there. 
 ## After the web service is created, the URL to access it is http://localhost:8080 (if web service is run locally OR use your google cloud external IP)
 
    **Different rest calls that can be made to the webservice**
-   Note: If simply clicking the URL doesn't work, copy it and paste in your browser.
+   
+Note: If simply clicking the URL doesn't work, copy it and paste in your browser.
 	  
 		http://127.0.0.1:8080/?insertNode=0
 		
@@ -256,11 +262,13 @@ Run->Edit Configurations->Use classpath of module and specify the module there. 
 -------------------------------------------------------------------------------------------------------
 **Bonus Implementations Details**
 
-  1. Node joining: This allows a user to add a node in the ring. If there is no node in the ring, then the implementation calls ** CreateRingWithNode **  where the user can specify which node they want to add first in the ring. If the ring has atleast one active node, then the ** InsertNodeInRing** is called which adds the node to the ring on the basis of any active node in the ring. The implementation for these functions is present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test for ** CreateRingWithNode ** is : ** testCreateRingWithNode ** and for ** InsertNodeInRing ** is: ** testInsertNodeInRing **. Both the test cases are present in ** chordMainMethodTest.scala **. To run the test case, run testCreateRingWithNode and then testInsertNodeInRing. The paremeter passed for creating the ring or inserting the node in ring i.e. the node number can be changed to any number between 0 - 7. 
+  **1. Node joining:** This allows a user to add a node in the ring. If there is no node in the ring, then the implementation calls ** CreateRingWithNode **  where the user can specify which node they want to add first in the ring. If the ring has atleast one active node, then the ** InsertNodeInRing** is called which adds the node to the ring on the basis of any active node in the ring. The implementation for these functions is present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test for ** CreateRingWithNode ** is : ** testCreateRingWithNode ** and for ** InsertNodeInRing ** is: ** testInsertNodeInRing **. Both the test cases are present in ** chordMainMethodTest.scala **. To run the test case, run testCreateRingWithNode and then testInsertNodeInRing. The paremeter passed for creating the ring or inserting the node in ring i.e. the node number can be changed to any number between 0 - 7. 
 
-  2. Node leaving : This allows user to specify any node that they want to deactivate from the ring.  The method : ** DeleteNodeInRing ** is called to deactivate a node from the ring. This method is presnt in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case for node leaving is : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala **. To run the test case, please run testCreateRingWithNode and then testDeleteNodeInRing. 
+  **2. Node leaving :** This allows user to specify any node that they want to deactivate from the ring.  The method : ** DeleteNodeInRing ** is called to deactivate a node from the ring. This method is presnt in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case for node leaving is : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala **. To run the test case, please run testCreateRingWithNode and then testDeleteNodeInRing. 
 
-  3. Transfer of keys : This implementation allows to transfer the keys from one node to other node either when a node is leaving or if a new node is joining then the neighboring nodes can transfer existing keys from their dataset to the newly joined node. This implementation is present in method : ** transferKeys ** in ** ChordAlgorithm.scala ** => ** CloudNodeActor **. This method call happens when a node is leaving, then it will transfer all its keys to its successor. The unit test case : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala ** performs this as an internal operation. When a new node joins : ** addKeys_whennodejoin ** - this operation is performed internally and if the keys needs to updated from one nodes dataset to other they will be transferred. The unit test case : ** testInsertNodeInRing ** in ** chordMainMethodTest.scala ** performs this operation internally.
+  **3. Transfer of keys :** This implementation allows to transfer the keys from one node to other node either when a node is leaving or if a new node is joining then the neighboring nodes can transfer existing keys from their dataset to the newly joined node. This implementation is present in method : ** transferKeys ** in ** ChordAlgorithm.scala ** => ** CloudNodeActor **. This method call happens when a node is leaving, then it will transfer all its keys to its successor. The unit test case : ** testDeleteNodeInRing **. present in ** chordMainMethodTest.scala ** performs this as an internal operation. When a new node joins 
+
+: ** addKeys_whennodejoin ** - this operation is performed internally and if the keys needs to updated from one nodes dataset to other they will be transferred. The unit test case : ** testInsertNodeInRing ** in ** chordMainMethodTest.scala ** performs this operation internally.
 
   4. Delete Key : This implementation allows to delete an item (if existing) from a nodes dataset. This method is : ** DeleteKey ** present in ** ChordAlgorithm.scala ** =>  ** object chordMainMethod **. The unit test case is: ** testDeleteKey ** present in ** chordMainMethodTest.scala **. To run this test case, please run testLookupAndPut and then testDeleteKey.
 
@@ -272,11 +280,11 @@ Run->Edit Configurations->Use classpath of module and specify the module there. 
 
      ActorLogging was used to check how much time it required to activate each node in the ring when create ring or insert node in ring are called. Different time logs are taken to check how much time is taken by different node actors to perform different operations.
 
-   7. Automated concurrent user request simulation which includes addition, deletion and retrieval of movies:
+   7. **Automated concurrent user request simulation which includes addition, deletion and retrieval of movies:**
    UserActor.scala contains all the cases and method definitions used to query the WebService to add/lookup/delete movie details.
    MyUserActorDriver.scala initiates all the user actors and start the multiple read/write/delete requests in parallel. All the requests are sent to actors according to the readWrite ratio, minimum, maximum requests in a minute provided as command line arguments. 
    
-   8. Load testing:
+   8. **Load testing:**
    We have run this simulator with maximum 5000 nodes and 500 users present in the system. We had to increase the default heap memory size from 512m to 4096m using -Xmx4096m option in idea.exe.vmoptions file.
    loadTest() method present in MyUserActorDriver.scala performs this action.
 
