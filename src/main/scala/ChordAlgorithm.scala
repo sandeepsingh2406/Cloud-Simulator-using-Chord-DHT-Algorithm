@@ -153,6 +153,7 @@ with ActorLogging {
 
       val startTime2 = System.currentTimeMillis()
 
+      /* Stabilize the entire cloud ring after a new node joins */
         for(counter <- 0 until chordMainMethod.ActorJoined.length)
         {
           for(insidecounter <- 0 until chordMainMethod.ActorJoined.length)
@@ -212,7 +213,6 @@ with ActorLogging {
       /* used a  random string for now- generally this will be the computers IP address */
       nodeString = Random.alphanumeric.take(20).mkString.toLowerCase()
 
-      //hashValue = chordMainMethod.md5(nodeString,m)
       hashValue = chordMainMethod.getHash(nodeString,m)
 
       println("Hash value for: "+nodeString+" is: "+hashValue)
@@ -232,7 +232,6 @@ with ActorLogging {
       chordMainMethod.SortedHashedActor += NodeArrayActors(count)
       println("Sorted Hashed Node at Index: "+count+" key: "+chordMainMethod.SortedHashedActor(count))
     }
-    /* activate the first node in the ring */
 
   }
 
@@ -252,7 +251,6 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
   var isActiveNode : Int = -1
 
   var listOfItems = scala.collection.mutable.HashMap[String, String]()
-  //var listOfItems : ListBuffer[String] = new ListBuffer[String]
 
   def receive = {
     case "intiateEachNode" => {
@@ -449,10 +447,10 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
           || this.predecessor == currentCallingNode && notifyThisNode != this.predecessor ))
 
       {
-        //transfer keys
 
         this.predecessor = notifyThisNode;
 
+        /* transfer keys - when a new node joins or leaves  accordingly transfer the keys to its successor */
         var transfer_listofitems = scala.collection.mutable.HashMap[String, String]()
 
         for((tempName, tempDetail) <- this.listOfItems)
@@ -533,6 +531,8 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
         println("Current active nodes in system: "+chordMainMethod.ActorJoined)
       }
       else{
+        /* There is only one node in the system  -which is leaving. Thus now the cloud ring has no active nodes.
+         * reverting the state of the  node to initial state */
         this.predecessor = -1
         this.successor = -1
         this.isActiveNode = -1
@@ -765,7 +765,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
     return tempCurrNode
   }
 
-
+/* Find the closes preceding node for the finger node table value for the current node present in the system */
   def closest_preceding_finger(fingerNodeVale : String, currActorNodeIndex : Int, requestOrigin : String):Int={
     println("inside closest preceding finger : for node: "+currActorNodeIndex)
     var count:Int = m
@@ -819,6 +819,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
     return currActorNodeIndex
   }
 
+  /* Stabilize - called when a new node joins the ring */
   def Stabilize(currActorNodeIndex:Int) {
     var result: Int = -1
     val tempSucc = this.successor //current successor
@@ -852,6 +853,7 @@ class CloudNodeActor(HashedValue: String,TotalNodes:Int, ActiveNodes: Int ,Simul
   }
 }
 
+/* This object contains all the actors instantiation and then call the service to start interacting with the cloud */
 object chordMainMethod {
 
   implicit val timeout = Timeout(100 seconds)
@@ -866,10 +868,7 @@ object chordMainMethod {
 
   var nodeSpace : Int = -1
 
-  def md5(s: String, m : Int) : String = {
-    return MessageDigest.getInstance("MD5").digest(s.getBytes).toString
-  }
-
+  /* get hash value for the string passed */
   def getHash(key:String, m : Int): String = {
 
     val sha_instance = MessageDigest.getInstance("SHA-1")
@@ -878,6 +877,7 @@ object chordMainMethod {
     return generated_hash
   }
 
+  /* Main method - entry point for the cloud simulator */
   def main(args: Array[String])
   {
 
@@ -910,14 +910,18 @@ object chordMainMethod {
     val futureMaster = Master ? "startProcess"
     println(Await.result(futureMaster, timeout.duration).asInstanceOf[String]+" instantiating chord simulator")
 
+    /* CloudSimulator.log - this will maintain all the logs for the activities happening in the system */
     var path1 = "CloudSimulator.log"
     new File(path1).delete()
     val file = new File(path1).createNewFile()
 
+    /* ChordSnapshot.txt - this will maintain all the snapshots as triggered after simulation mark is reached */
     path1 = "ChordSnapshot.txt"
     new File(path1).delete()
     new File(path1).createNewFile()
 
+    /* Start the web service after all the nodes instantiation has been done for the ring. All the nodes are currently
+     * inactive and are not active. Any request to nodes will not be processed till insertion of node is not done */
     val thread = new Thread(new Runnable {
       def run() {
         val inst: Service = new Service()
@@ -946,7 +950,7 @@ object chordMainMethod {
     thread1.start()
     Thread.sleep(5000)
 
-    println("///////////////////////////////Everything started")
+    println("***********************Everything started***********************")
     var start = System.currentTimeMillis();
     println("start @ "+start)
 
@@ -955,18 +959,13 @@ object chordMainMethod {
 
     while (System.currentTimeMillis() < end)
     {
-
+      //do nothing wait till the simulation duration is reached and then stop the actors and shutdown the system
     }
     println("Stopping Everything")
     thread.interrupt()
     thread1.interrupt()
     system.stop(Master)
     System.exit(0)
-
-
-
-
-
 
   }
 
@@ -983,6 +982,7 @@ object chordMainMethod {
     return "done"
   }
 
+  /* Insert a new node into the ring  - this node will join the ring on the basis of some existing node in the ring */
   def InsertNodeInRing( nodeIndex : Int): String = {
 
     println("Insert node in ring with index: "+nodeIndex)
@@ -996,6 +996,7 @@ object chordMainMethod {
     return "done"
   }
 
+  /* check whether an item - movie name is already present in the list of some active node in the system*/
   def LookupItem(itemString : String) : String = {
 
     val random = new Random
@@ -1013,7 +1014,6 @@ object chordMainMethod {
 
     val succRes = Await.result(future, timeout.duration).asInstanceOf[Int]
 
-   // LookupListItem(succRes,itemString.toLowerCase())
     println("Look up item : response from find_successor : "+succRes)
 
     return succRes.toString
@@ -1061,6 +1061,7 @@ object chordMainMethod {
     return "done"
   }
 
+  /* This method is for deleting an item - movie and its details from the list of the selected node */
   def DeleteKey(nodeIndex:Int, itemName : String) :String ={
     println("Delete movie: "+itemName+" present at node: "+nodeIndex)
 
@@ -1073,10 +1074,11 @@ object chordMainMethod {
 
     return "done"
   }
+  /* this definition is used for getting instant snapshots of the system */
   def SnapshotActors(nodeIndex:Int) :String = {
     val actorRef = system.actorSelection("akka://ChordProtocolHW4/user/node_" + nodeIndex.toString)
     val future = actorRef ? GetAllDetails(nodeIndex)
 
     return (Await.result(future, timeout.duration).asInstanceOf[String])
   }
-  }
+}
