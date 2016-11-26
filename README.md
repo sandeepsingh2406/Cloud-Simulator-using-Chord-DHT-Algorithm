@@ -21,7 +21,7 @@ Apart from the basic requirements of the Cloud Simulator, we have also implement
 
 Use of two different logging frameworks, **SLF4J** and **ActorLogging** for node and user simulation respectively.
 
-Automated concurrent user request simulation which includes addition, deletion and retrieval of movies
+**Automated concurrent user request simulation** which includes addition, deletion and retrieval of movies
 
 **Load tested our simulator** to simulate **5000 nodes** and **500 users**. We increased heap memory size from 512m to **4096m** for this execution
 
